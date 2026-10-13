@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ya tienes una cuenta</title>
+<!-- Materialize CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+<!-- la flecha -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style>
+body {
+  background-color: #f4f4f4;
+  font-family: 'Caveat Brush', cursive; 
+}
+/* Contenedor principal  */
+.contenedor-pantalla {
+  max-width: 750px;
+  margin: 40px auto;
+  background-color: #ffffff;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  position: relative;
+  padding-bottom: 30px;
+}
+/* Franja  */
+.header-amarillo {
+  background-color: #fcd72b;
+  padding: 15px;
+  text-align: center;
+}
+.header-amarillo h4 {
+  margin: 0;
+  color: #000;
+  font-weight: normal;
+  font-size: 2.2rem;
+}
+/* Koala y botones*/
+.contenido {
+  padding: 30px 20px 10px 20px;
+}
+/* Imagen del koala */
+.img-koala {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+/* Estilos para los botones  */
+.btn-opcion {
+  background-color: #fcd72b;
+  color: #000;
+  border-radius: 15px;
+  text-transform: none; /* Mantiene minusculas y mayusculas normales */
+  font-family: 'Caveat Brush', cursive;
+  font-size: 1.2rem;
+  width: 100%;
+  height: 50px;
+  line-height: 50px;
+  margin-bottom: 20px;
+  box-shadow: none;
+}
+.btn-opcion:focus,
+.btn-opcion:active {
+  background-color: #fcd72b ; 
+  box-shadow: none ;
+}
+.btn-flecha:focus,
+.btn-flecha:active {
+  background-color: #fcd72b;
+  box-shadow: none ;
+}
+.btn-opcion:hover {
+  background-color: #ebd020;
+}
+/* Botón circular de flecha abajo */
+.btn-flecha {
+  position: absolute;
+  bottom: 20px;
+  right: 25px;
+  background-color: #fcd72b;
+  color: #000;
+  box-shadow: none;
+}
+.btn-flecha:hover {
+  background-color: #817fe6; 
+}
+.btn-flecha i {
+  color: #000;
+  font-size: 1.8rem;
+}
+</style>
+</head>
+<body>
+<div class="contenedor-pantalla">
+  <!-- Header superior -->
+  <div class="header-amarillo">
+    <h4>Ya tienes una cuenta</h4>
+  </div>
+  <!-- Contenido en cuadricula usando el grid de Materialize -->
+  <div class="contenido">
+    <div class="row valign-wrapper" style="margin-bottom: 0;">
+      <!-- Columna del Koala -->
+      <div class="col s12 m6 center-align">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSClrfviPS-K5JEyuBdr5EtuPmi5kmQFKukhX08mGat3A&s=10" alt="Koala" class="img-koala">
+      </div>
+      <!-- Columna de los Botones -->
+      <div class="col s12 m6">
+        <a href="##" class="btn btn-opcion waves-effect">Aprendamos de cero!</a>
+        <a href="##" class="btn btn-opcion waves-effect">Sigamos aprendiendo!</a>
+      </div>
+    </div>
+  </div>
+  <!-- Boton de la flecha siguiente -->
+  <a href="##" class="btn-floating btn-large btn-flecha waves-effect">
+    <i class="material-icons">arrow_forward</i>
+  </a>
+</div>
+<!-- Materialize -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>
