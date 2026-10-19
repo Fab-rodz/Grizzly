@@ -189,7 +189,7 @@
     </main>
 
     <!-- Botón Izquierdo (Regresar) -->
-    <a href="#" class="btn-floating btn-large waves-effect waves-light nav-btn btn-left" id="btn-atras">
+    <a href="ya tienes una cuenta.html" class="btn-floating btn-large waves-effect waves-light nav-btn btn-left" id="btn-atras">
       <i class="material-icons">arrow_back</i>
     </a>
 
@@ -263,7 +263,7 @@ const app = initializeApp(firebaseConfig);
             html: `¡Hola de nuevo, ${userData.Nombre}! 👋`, 
             classes: 'rounded green lighten-1'
           });
-
+          setTimeout(() => { window.location.href = "seleccionar nivel.html"; }, 1000)
           // Redirigir al siguiente nivel/pantalla tras 1 segundo
           // setTimeout(() => { window.location.href = "menu.html"; }, 1000);
 

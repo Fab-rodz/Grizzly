@@ -48,19 +48,19 @@
       z-index: 1;
     }
 
-    /* Contenedor central ampliado */
+    /* Contenedor central principal */
     .content-wrapper {
       position: relative;
       z-index: 2;
       width: 100%;
-      max-width: 680px; /* Ampliado para permitir que el texto gire completo */
-      height: 520px;
+      max-width: 700px;
+      height: 620px;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    /* SVG con el arco de texto amplio */
+    /* SVG del texto con arco super curvo */
     .curved-text-svg {
       position: absolute;
       top: 0;
@@ -69,21 +69,25 @@
       height: 100%;
       pointer-events: none;
       overflow: visible;
+      z-index: 5;
     }
 
     .curved-text-svg text {
       font-family: 'Fredoka', sans-serif;
-      font-size: 25px; /* Tamaño ajustado para encajar perfectamente */
+      font-size: 26px;
       font-weight: 700;
       fill: #111111;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
     }
 
-    /* Imagen del Oso */
+    /* Imagen del Oso (Centrada exactamente bajo la cúpula del texto) */
     .mascot-img {
-      width: 250px;
+      width: 330px;
+      max-width: 100%;
       height: auto;
-      margin-top: 70px;
+      margin-top: 130px;
+      position: relative;
+      z-index: 2;
       filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.06));
     }
 
@@ -118,10 +122,10 @@
 
     <div class="content-wrapper">
 
-      <!-- SVG con trayecto ampliado (d) de 50px a 650px -->
-      <svg class="curved-text-svg" viewBox="0 0 700 500">
-        <!-- Arco más amplio que baja más por los costados -->
-        <path id="text-arc" d="M 40,390 A 310,310 0 0,1 660,390" fill="none"/>
+      <!-- SVG con trayecto semicircular de alto grado de curvatura -->
+      <svg class="curved-text-svg" viewBox="0 0 700 620">
+        <!-- Arco semicircular cerrado (Radio 235px, caída vertical de 170px) -->
+        <path id="text-arc" d="M 120,310 A 235,235 0 0,1 580,310" fill="none"/>
         
         <text>
           <textPath href="#text-arc" startOffset="50%" text-anchor="middle">
@@ -130,7 +134,7 @@
         </text>
       </svg>
 
-      <!-- Personaje -->
+      <!-- Personaje Oso -->
       <img src="Imágenes/bd0149f6-6422-45e6-a2ee-9e5e3e0695ec_removalai_preview.png" 
            alt="Grizzly Mascot" 
            class="mascot-img">

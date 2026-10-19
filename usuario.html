@@ -190,7 +190,7 @@
     </main>
 
     <!-- Botón Izquierdo (Atrás) -->
-    <a href="#" class="btn-floating btn-large waves-effect waves-light nav-btn btn-left" id="btn-atras">
+    <a href="ya tienes una cuenta.html" class="btn-floating btn-large waves-effect waves-light nav-btn btn-left" id="btn-atras">
       <i class="material-icons">arrow_back</i>
     </a>
 
@@ -250,6 +250,7 @@ const firebaseConfig = {
         });
 
         M.toast({html: '¡Nombre guardado exitosamente! 🎉', classes: 'rounded green lighten-1'});
+        setTimeout(() => { window.location.href = "seleccionar nivel.html"; }, 1000)
 
         // Aquí puedes redirigir a la siguiente vista
         // setTimeout(() => { window.location.href = "juego.html"; }, 1000);
