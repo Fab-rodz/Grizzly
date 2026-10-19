@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego Educativo Infantil - Ruleta de las Vocales</title>
+    <!-- Materialize CSS CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Material Icons & Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <style>
+        :root {
+            --yellow-accent: #FFDC00;
+            --yellow-dark: #f1c40f;
+            --text-dark: #1a1a1a;
+            --bg-light: #FAFAFA;
+        }
+
+        body {
+            font-family: 'Fredoka', 'Quicksand', sans-serif;
+            background-color: #FFF085;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        /* BARRA SUPERIOR AMARILLA DE LA VOCAL */
+        .header-vocal {
+            background-color: var(--yellow-accent);
+            padding: 22px 10px;
+            text-align: center;
+            border-bottom: 3px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 15px rgba(255, 220, 0, 0.3);
+            position: relative;
+        }
+
+        .header-vocal h1 {
+            margin: 0;
+            font-size: clamp(2.2rem, 5vw, 3.8rem);
+            font-weight: 700;
+            color: var(--text-dark);
+            letter-spacing: 0.5px;
+        }
+
+        /* ÁREA PRINCIPAL DEL JUEGO */
+        .game-stage {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .stage-container {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        /* PERSONAJE OSO */
+        .bear-container {
+            flex: 1;
+            min-width: 280px;
+            max-width: 420px;
+            text-align: center;
+            position: relative;
+        }
+
+        .bear-img {
+            width: 100%;
+            max-height: 420px;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
+            transition: transform 0.3s ease;
+        }
+
+        .bear-container:hover .bear-img {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        /* CONTENEDOR DE LA RULETA INTERACTIVA */
+        .wheel-wrapper {
+            flex: 1;
+            min-width: 320px;
+            max-width: 480px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .wheel-canvas-container {
+            position: relative;
+            width: 100%;
+            max-width: 440px;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Flecha indicadora superior de la ruleta */
+        .wheel-pointer {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 38px;
+            height: 48px;
+            z-index: 10;
+            filter: drop-shadow(0px 4px 5px rgba(0,0,0,0.3));
+        }
+
+        canvas#wheelCanvas {
+            width: 100% !important;
+            height: 100% !important;
+            border-radius: 50%;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            cursor: pointer;
+            transition: filter 0.2s ease;
+        }
+
+        canvas#wheelCanvas:active {
+            filter: brightness(0.95);
+        }
+
+        /* BOTÓN FLOTANTE CON LA FLECHITA */
+        .btn-next-floating {
+            position: fixed;
+            bottom: 30px;
+            right: 35px;
+            width: 70px;
+            height: 70px;
+            background-color: var(--yellow-accent);
+            border: 3px solid var(--text-dark);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            z-index: 90;
+            text-decoration: none;
+        }
+
+        .btn-next-floating:hover {
+            transform: scale(1.1) rotate(5deg);
+            background-color: #ffe633;
+        }
+
+        .btn-next-floating i {
+            font-size: 2.8rem;
+            color: var(--text-dark);
+            font-weight: bold;
+        }
+
+        /* MODALES Y DIÁLOGOS INFANTILES */
+        .modal-result {
+            border-radius: 30px !important;
+            border: 4px solid var(--yellow-accent);
+            text-align: center;
+            padding: 25px !important;
+            max-width: 450px !important;
+        }
+
+        .result-img-container {
+            width: 130px;
+            height: 130px;
+            margin: 0 auto 10px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: bounce 0.6s ease infinite alternate;
+        }
+
+        .result-img-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-12px); }
+        }
+
+        @media (max-width: 600px) {
+            .btn-next-floating {
+                width: 58px;
+                height: 58px;
+                bottom: 20px;
+                right: 20px;
+            }
+            .btn-next-floating i { font-size: 2.2rem; }
+            .bear-img { max-height: 280px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="header-vocal">
+        <h1 id="vocalTitle">Esta es la vocal "U"</h1>
+    </header>
+
+    <!-- ESCENARIO DEL JUEGO -->
+    <main class="game-stage">
+        <div class="stage-container">
+            
+            <div class="bear-container">
+                <img id="bearImage" 
+                     src="img/osito_original_fondo_transparente.png" 
+                     alt="Oso Infantil" 
+                     class="bear-img">
+            </div>
+
+            <!-- CONTENEDOR DE LA RULETA INTERACTIVA -->
+            <div class="wheel-wrapper">
+                <div class="wheel-canvas-container">
+                    <!-- Indicador Flecha -->
+                    <svg class="wheel-pointer" viewBox="0 0 40 50">
+                        <polygon points="20,50 2,10 38,10" fill="#E52421" stroke="#1a1a1a" stroke-width="3"/>
+                        <circle cx="20" cy="12" r="6" fill="#FFDC00"/>
+                    </svg>
+                    <!-- Canvas de la Ruleta -->
+                    <canvas id="wheelCanvas" width="800" height="800"></canvas>
+                </div>
+                <p class="center-align grey-text text-darken-2" style="font-weight: 600; margin-top: 15px; font-size: 1.1rem;">
+                    👇 ¡Haz clic o toca la ruleta para girar!
+                </p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- BOTÓN FLOTANTE FLECHA -->
+    <a href="#" class="btn-next-floating tooltipped" data-position="top" data-tooltip="Ir a la siguiente <br> pagina">
+        <i class="material-icons">arrow_forward</i>
+    </a>
+
+    <!-- MODAL RESULTADO -->
+    <div id="modalResult" class="modal modal-result">
+        <div class="modal-content">
+            <div class="result-img-container">
+                <img id="resultImage" src="" alt="Ganador">
+            </div>
+            <h3 id="resultTitle" style="font-weight: 700; margin: 5px 0; color: #1a1a1a;">¡UVA!</h3>
+            <p id="resultSubtitle" style="font-size: 1.4rem; font-weight: 600; color: #e52421;">¡Empieza con la vocal U!</p>
+        </div>
+        <div class="modal-footer center-align" style="display: flex; justify-content: center;">
+            <a href="#!" class="modal-close btn-large waves-effect waves-light" style="background-color: var(--yellow-accent); color: #000; font-weight: 700; border-radius: 25px;">
+                ¡SEGUIR JUGANDO! 🎉
+            </a>
+        </div>
+    </div>
+
+    <!-- Materialize JS CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script>
+        let gameState = {
+            vocal: "Uu",
+            title: 'Esta es la vocal "U"',
+            sectors: [
+                { 
+                    name: "UVA", 
+                    imgUrl: "https://cdn-icons-png.flaticon.com/512/375/375084.png", 
+                    color: "#00b4d8",
+                    imgObj: null,
+                    isLoaded: false
+                },
+                { 
+                    name: "UNICORNIO", 
+                    imgUrl: "https://cdn-icons-png.flaticon.com/512/1077/1077035.png", 
+                    color: "#ff5c8a",
+                    imgObj: null,
+                    isLoaded: false
+                },
+                { 
+                    name: "URNA", 
+                    imgUrl: "https://cdn-icons-png.flaticon.com/512/3233/3233816.png", 
+                    color: "#06d6a0",
+                    imgObj: null,
+                    isLoaded: false
+                },
+                { 
+                    name: "UNIFORME", 
+                    imgUrl: "https://cdn-icons-png.flaticon.com/512/3039/3039018.png", 
+                    color: "#9b5de5",
+                    imgObj: null,
+                    isLoaded: false
+                },
+                { 
+                    name: "UN", 
+                    imgUrl: "https://cdn-icons-png.flaticon.com/512/1785/1785255.png", 
+                    color: "#ffd166",
+                    imgObj: null,
+                    isLoaded: false
+                },
+                { 
+                    name: "UÑAS", 
+                    imgUrl: "https://cdn-icons-png.flaticon.com/512/1828/1828884.png", 
+                    color: "#ff9f1c",
+                    imgObj: null,
+                    isLoaded: false
+                }
+            ]
+        };
+
+        const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
+        let isSpinning = false;
+        let currentAngle = 0;
+        let spinSpeed = 0;
+        let spinDeceleration = 0.985;
+        let animFrameId = null;
+
+        function loadSectorImages(callback) {
+            let loadedCount = 0;
+            const total = gameState.sectors.length;
+
+            if (total === 0) {
+                if (callback) callback();
+                return;
+            }
+
+            gameState.sectors.forEach((sector) => {
+                const img = new Image();
+                img.crossOrigin = "Anonymous";
+                img.onload = () => {
+                    sector.imgObj = img;
+                    sector.isLoaded = true;
+                    loadedCount++;
+                    if (loadedCount === total && callback) callback();
+                    drawWheel();
+                };
+                img.onerror = () => {
+                    sector.imgObj = new Image();
+                    sector.imgObj.src = "https://cdn-icons-png.flaticon.com/512/1828/1828884.png";
+                    sector.isLoaded = true;
+                    loadedCount++;
+                    if (loadedCount === total && callback) callback();
+                    drawWheel();
+                };
+                img.src = sector.imgUrl;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            M.Modal.init(document.querySelectorAll('.modal'));
+            M.Tooltip.init(document.querySelectorAll('.tooltipped'));
+
+            loadSectorImages(() => {
+                drawWheel();
+            });
+
+            canvas.addEventListener('click', startSpin);
+        });
+
+        function drawWheel() {
+            const numSectors = gameState.sectors.length;
+            const arcSize = (2 * Math.PI) / numSectors;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const outerRadius = canvas.width / 2 - 20;
+            const innerCenterRadius = 90;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Borde exterior oscuro
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, outerRadius + 10, 0, 2 * Math.PI);
+            ctx.fillStyle = '#0a1128';
+            ctx.fill();
+            ctx.lineWidth = 6;
+            ctx.strokeStyle = '#000000';
+            ctx.stroke();
+
+            const totalDots = 30;
+            for (let i = 0; i < totalDots; i++) {
+                const dotAngle = (i * 2 * Math.PI) / totalDots;
+                const dotX = centerX + (outerRadius + 5) * Math.cos(dotAngle);
+                const dotY = centerY + (outerRadius + 5) * Math.sin(dotAngle);
+                ctx.beginPath();
+                ctx.arc(dotX, dotY, 4, 0, 2 * Math.PI);
+                ctx.fillStyle = (i % 2 === 0) ? '#FFDC00' : '#FFFFFF';
+                ctx.fill();
+            }
+            ctx.restore();
+
+            // Dibujar sectores
+            for (let i = 0; i < numSectors; i++) {
+                const sector = gameState.sectors[i];
+                const angle = currentAngle + i * arcSize;
+
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.arc(centerX, centerY, outerRadius, angle, angle + arcSize);
+                ctx.closePath();
+                
+                ctx.fillStyle = sector.color;
+                ctx.fill();
+                ctx.lineWidth = 5;
+                ctx.strokeStyle = '#000000';
+                ctx.stroke();
+
+                ctx.save();
+                ctx.translate(centerX, centerY);
+                ctx.rotate(angle + arcSize / 2);
+
+                const imgDistance = outerRadius * 0.62;
+                const imgSize = 85;
+
+                // DIBUJAR IMAGEN
+                if (sector.imgObj && sector.isLoaded) {
+                    try {
+                        ctx.drawImage(
+                            sector.imgObj, 
+                            imgDistance - imgSize / 2, 
+                            -imgSize / 2 - 22, 
+                            imgSize, 
+                            imgSize
+                        );
+                    } catch (e) {}
+                }
+
+                // ETIQUETA / CARTEL DE TEXTO PRO
+                ctx.font = '700 18px "Fredoka", sans-serif';
+                const text = sector.name;
+                const textWidth = ctx.measureText(text).width;
+                const rectWidth = textWidth + 24;
+                const rectHeight = 28;
+                const rectX = imgDistance - rectWidth / 2;
+                const rectY = 28;
+
+                // Fondo blanco redondeado para la etiqueta
+                ctx.fillStyle = '#FFFFFF';
+                ctx.beginPath();
+                if (ctx.roundRect) {
+                    ctx.roundRect(rectX, rectY, rectWidth, rectHeight, 14);
+                } else {
+                    ctx.rect(rectX, rectY, rectWidth, rectHeight);
+                }
+                ctx.fill();
+                ctx.lineWidth = 2.5;
+                ctx.strokeStyle = '#000000';
+                ctx.stroke();
+
+                // Texto del objeto
+                ctx.fillStyle = '#000000';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(text, imgDistance, rectY + rectHeight / 2);
+
+                ctx.restore();
+            }
+
+            // Centro con la vocal Uu
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, innerCenterRadius + 4, 0, 2 * Math.PI);
+            ctx.fillStyle = '#000000';
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, innerCenterRadius, 0, 2 * Math.PI);
+            ctx.fillStyle = '#FFDC00';
+            ctx.fill();
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = '#000000';
+            ctx.stroke();
+
+            ctx.fillStyle = '#00b4d8';
+            ctx.font = '700 80px "Fredoka", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            
+            ctx.lineWidth = 7;
+            ctx.strokeStyle = '#000000';
+            ctx.strokeText(gameState.vocal, centerX, centerY + 2);
+            ctx.fillText(gameState.vocal, centerX, centerY + 2);
+
+            ctx.restore();
+        }
+
+        function startSpin() {
+            if (isSpinning) return;
+
+            isSpinning = true;
+            spinSpeed = Math.random() * 0.25 + 0.35;
+            
+            playSpinSound();
+            animateSpin();
+        }
+
+        function animateSpin() {
+            if (!isSpinning) return;
+
+            currentAngle += spinSpeed;
+            spinSpeed *= spinDeceleration;
+            currentAngle %= (2 * Math.PI);
+
+            drawWheel();
+
+            if (spinSpeed < 0.002) {
+                isSpinning = false;
+                spinSpeed = 0;
+                determineWinner();
+            } else {
+                animFrameId = requestAnimationFrame(animateSpin);
+            }
+        }
+
+        function determineWinner() {
+            const numSectors = gameState.sectors.length;
+            const arcSize = (2 * Math.PI) / numSectors;
+
+            let effectiveAngle = (1.5 * Math.PI - currentAngle) % (2 * Math.PI);
+            if (effectiveAngle < 0) effectiveAngle += (2 * Math.PI);
+
+            const winningIndex = Math.floor(effectiveAngle / arcSize);
+            const winner = gameState.sectors[winningIndex];
+
+            document.getElementById('resultImage').src = winner.imgUrl;
+            document.getElementById('resultTitle').textContent = `¡${winner.name}!`;
+            document.getElementById('resultSubtitle').textContent = `¡Empieza con la vocal U!`;
+
+            playWinSound();
+
+            const modalInst = M.Modal.getInstance(document.getElementById('modalResult'));
+            modalInst.open();
+        }
+
+        function playSpinSound() {
+            try {
+                const ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctxAudio.createOscillator();
+                const gain = ctxAudio.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(350, ctxAudio.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1100, ctxAudio.currentTime + 0.4);
+                gain.gain.setValueAtTime(0.2, ctxAudio.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctxAudio.currentTime + 0.4);
+                osc.connect(gain);
+                gain.connect(ctxAudio.destination);
+                osc.start();
+                osc.stop(ctxAudio.currentTime + 0.4);
+            } catch (e) {}
+        }
+
+        function playWinSound() {
+            try {
+                const ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
+                const notes = [261.63, 329.63, 392.00, 523.25];
+                notes.forEach((freq, idx) => {
+                    const osc = ctxAudio.createOscillator();
+                    const gain = ctxAudio.createGain();
+                    osc.frequency.value = freq;
+                    gain.gain.setValueAtTime(0.15, ctxAudio.currentTime + idx * 0.1);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctxAudio.currentTime + idx * 0.1 + 0.3);
+                    osc.connect(gain);
+                    gain.connect(ctxAudio.destination);
+                    osc.start(ctxAudio.currentTime + idx * 0.1);
+                    osc.stop(ctxAudio.currentTime + idx * 0.1 + 0.3);
+                });
+            } catch (e) {}
+        }
+    </script>
+</body>
+</html>

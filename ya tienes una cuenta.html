@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ya tienes una cuenta</title>
+<!-- Materialize CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+<!-- Google Fonts: Fredoka -->
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- Iconos -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+<style>
+  :root {
+    --yellow-banner: #fcd72b;
+    --yellow-hover: #ebd020;
+    --text-dark: #000000;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    font-family: 'Fredoka', sans-serif;
+    background-color: #fff390;
+  }
+
+  /* Layout principal que ocupa toda la ventana */
+  .main-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: 100vw;
+  }
+
+  /* Franja amarilla superior de borde a borde (sin línea negra) */
+  .header-amarillo {
+    background-color: var(--yellow-banner);
+    padding: 30px 10px;
+    text-align: center;
+    width: 100%;
+    border-bottom: none; /* Línea negra eliminada */
+  }
+
+  .header-amarillo h4 {
+    margin: 0;
+    color: var(--text-dark);
+    font-weight: 700;
+    font-size: 3.6rem; /* Letras un poco más grandes */
+    letter-spacing: 0.5px;
+  }
+
+  /* Contenido central distribuido en el espacio restante */
+  .contenido-fullscreen {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 5%;
+    width: 100%;
+  }
+
+  .row-fullscreen {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto !important;
+  }
+
+  .img-koala {
+    max-width: 450px;
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    object-fit: contain;
+  }
+
+  
+  .btn-opcion {
+    background-color: var(--yellow-banner) !important;
+    color: var(--text-dark) !important;
+    border: 3px solid var(--text-dark);
+    border-radius: 25px;
+    text-transform: none;
+    font-family: 'Fredoka', sans-serif;
+    font-weight: 700;
+    font-size: 1.8rem;
+    width: 100%;
+    max-width: 500px;
+    height: 85px;
+    line-height: 78px;
+    margin: 0 auto 25px auto;
+    display: block;
+    box-shadow: 0 6px 0 var(--text-dark) !important;
+    transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease;
+  }
+
+  .btn-opcion:hover {
+    background-color: var(--yellow-hover) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 9px 0 var(--text-dark) !important;
+  }
+
+  .btn-opcion:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 var(--text-dark) !important;
+  }
+
+  /* Botón flotante siguiente (esquina inferior derecha) */
+  .btn-next-floating {
+    position: fixed;
+    bottom: 35px;
+    right: 40px;
+    width: 75px;
+    height: 75px;
+    background-color: var(--yellow-banner);
+    border: 3px solid var(--text-dark);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    cursor: pointer;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+    z-index: 99;
+    text-decoration: none;
+  }
+
+  .btn-next-floating:hover {
+    transform: scale(1.1);
+    background-color: var(--yellow-hover);
+  }
+
+  .btn-next-floating i {
+    font-size: 3rem;
+    color: var(--text-dark);
+    font-weight: bold;
+  }
+
+
+  @media (max-width: 600px) {
+    .header-amarillo h4 {
+      font-size: 2.6rem; 
+    }
+    .img-koala {
+      max-width: 280px;
+      margin-bottom: 25px;
+    }
+    .btn-opcion {
+      height: 70px;
+      line-height: 64px;
+      font-size: 1.4rem;
+      max-width: 100%;
+    }
+    .btn-next-floating {
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+    }
+    .btn-next-floating i {
+      font-size: 2.3rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="main-wrapper">
+  
+  <div class="header-amarillo">
+    <h4>Ya tienes una cuenta</h4>
+  </div>
+
+  <div class="contenido-fullscreen">
+    <div class="row row-fullscreen valign-wrapper">
+      
+      
+      <div class="col s12 m6 center-align">
+        <img src="img/koala_original_fondo_transparente.png" alt="Koala" class="img-koala">
+      </div>
+
+      <!-- Columna de los Botones de Acción (Botones Grandes) -->
+      <div class="col s12 m6 center-align">
+        <a href="#!" class="btn btn-opcion waves-effect">¡Aprendamos de cero!</a>
+        <a href="#!" class="btn btn-opcion waves-effect">¡Sigamos aprendiendo!</a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Botón Flotante para ir a Siguiente Pantalla -->
+<a href="#" class="btn-next-floating tooltipped" data-position="top" data-tooltip="ir a la Siguiente<br> pagina">
+  <i class="material-icons">arrow_forward</i>
+</a>
+
+<!-- Materialize JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.tooltipped');
+    M.Tooltip.init(elems);
+  });
+</script>
+</body>
+</html>
