@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inicio | Grizzly</title>
 
-  <!-- Google Material Icons & Google Fonts (Fredoka para estilo infantil redondeado) -->
+  <!-- Google Material Icons & Google Fonts -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
 
@@ -22,12 +22,11 @@
       padding: 0;
       height: 100%;
       width: 100%;
-      background-color: #FFF59E; /* Tono amarillo claro inferior */
+      background-color: #FFF59E; /* Fondo inferior claro */
       font-family: 'Fredoka', cursive, sans-serif;
-      overflow: hidden; /* Mantiene la pantalla fija estilo pantalla de inicio */
+      overflow: hidden;
     }
 
-    /* Estructura del fondo con curva */
     .hero-container {
       position: relative;
       width: 100%;
@@ -37,30 +36,31 @@
       align-items: center;
     }
 
+    /* Fondo curvo superior */
     .seccion-curva {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 65vh;
-      background-color: #F8DF32; /* Tono amarillo principal */
+      background-color: #F8DF32; /* Amarillo principal */
       border-radius: 0 0 50% 50% / 0 0 35% 35%;
       z-index: 1;
     }
 
-    /* Contenedor central del oso y el texto curvo */
+    /* Contenedor central ampliado */
     .content-wrapper {
       position: relative;
       z-index: 2;
       width: 100%;
-      max-width: 550px;
-      height: 550px;
+      max-width: 680px; /* Ampliado para permitir que el texto gire completo */
+      height: 520px;
       display: flex;
       justify-content: center;
       align-items: center;
     }
 
-    /* SVG para el texto curvo */
+    /* SVG con el arco de texto amplio */
     .curved-text-svg {
       position: absolute;
       top: 0;
@@ -68,25 +68,26 @@
       width: 100%;
       height: 100%;
       pointer-events: none;
+      overflow: visible;
     }
 
     .curved-text-svg text {
       font-family: 'Fredoka', sans-serif;
-      font-size: 31px;
+      font-size: 25px; /* Tamaño ajustado para encajar perfectamente */
       font-weight: 700;
       fill: #111111;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
 
-    /* Imagen del personaje (Oso) */
+    /* Imagen del Oso */
     .mascot-img {
-      width: 280px;
+      width: 250px;
       height: auto;
-      margin-top: 60px;
-      filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.08));
+      margin-top: 70px;
+      filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.06));
     }
 
-    /* Botón flotante inferior derecho (Materialize FAB) */
+    /* Botón flotante inferior derecho */
     .btn-floating-custom {
       position: fixed;
       right: 32px;
@@ -113,16 +114,14 @@
 <body>
 
   <div class="hero-container">
-    <!-- Fondo Amarillo Curvo -->
     <div class="seccion-curva"></div>
 
-    <!-- Contenido Central -->
     <div class="content-wrapper">
 
-      <!-- SVG con texto curvado en arco -->
-      <svg class="curved-text-svg" viewBox="0 0 500 500">
-        <!-- Ruta invisible en forma de arco donde se montará el texto -->
-        <path id="text-arc" d="M 40,320 A 210,210 0 0,1 460,320" fill="none"/>
+      <!-- SVG con trayecto ampliado (d) de 50px a 650px -->
+      <svg class="curved-text-svg" viewBox="0 0 700 500">
+        <!-- Arco más amplio que baja más por los costados -->
+        <path id="text-arc" d="M 40,390 A 310,310 0 0,1 660,390" fill="none"/>
         
         <text>
           <textPath href="#text-arc" startOffset="50%" text-anchor="middle">
@@ -131,25 +130,18 @@
         </text>
       </svg>
 
-      <!-- Imagen del Oso Grizzly (Reemplaza la URL por tu imagen local o de proyecto) -->
-      <img src="https://cdni.iconscout.com/illustration/premium/thumb/cute-bear-waving-hand-illustration-download-in-svg-png-gif-file-formats--animal-teddy-welcome-hello-pack-illustrations-5383188.png" 
+      <!-- Personaje -->
+      <img src="/Imágenes/bd0149f6-6422-45e6-a2ee-9e5e3e0695ec_removalai_preview.png" 
            alt="Grizzly Mascot" 
            class="mascot-img">
     </div>
 
-    <!-- Botón Flotante (Materialize CSS) -->
+    <!-- Botón Flotante -->
     <a class="btn-floating btn-large waves-effect waves-light btn-floating-custom">
       <i class="material-icons">arrow_forward</i>
     </a>
   </div>
 
-  <!-- Materialize JavaScript -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Inicialización de componentes Materialize si agregas modales o tooltips
-      M.AutoInit();
-    });
-  </script>
 </body>
 </html>
