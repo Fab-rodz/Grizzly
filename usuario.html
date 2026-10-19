@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conozcamonos un poco | Grizzly</title>
+
+  <!-- Google Material Icons & Fuente Fredoka -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Materialize CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      width: 100vw;
+      background-color: #FFF59E; /* Tono claro del cuerpo */
+      font-family: 'Fredoka', cursive, sans-serif;
+      overflow: hidden;
+    }
+
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* Franja Amarilla Superior (Encabezado) */
+    .header-bar {
+      background-color: #F8DF32;
+      height: 22vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-bar h1 {
+      margin: 0;
+      font-size: 3.2rem;
+      font-weight: 700;
+      color: #111111;
+      text-align: center;
+    }
+
+    /* Contenido Principal */
+    .main-content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0 8%;
+    }
+
+    .content-grid {
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Sección Izquierda - Pregunta e Input */
+    .input-section {
+      flex: 1;
+      max-width: 450px;
+    }
+
+    .input-section h2 {
+      font-size: 2.3rem;
+      font-weight: 700;
+      color: #111111;
+      margin-bottom: 18px;
+    }
+
+    /* Estilo Ovalado para la caja de texto */
+    .custom-input {
+      background-color: #FFFDE7 !important;
+      border: 1px solid rgba(0,0,0,0.06) !important;
+      border-radius: 35px !important;
+      padding: 0 25px !important;
+      font-family: 'Fredoka', sans-serif !important;
+      font-size: 1.3rem !important;
+      color: #111111 !important;
+      height: 60px !important;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04) !important;
+      box-sizing: border-box !important;
+    }
+
+    .custom-input:focus {
+      border: 2px solid #F8DF32 !important;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+    }
+
+    /* Sección Derecha - Oso Leyendo */
+    .mascot-section {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .mascot-img {
+      max-width: 320px;
+      width: 100%;
+      height: auto;
+      filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.08));
+    }
+
+    /* Botones de Navegación de Materialize */
+    .nav-btn {
+      position: fixed;
+      bottom: 35px;
+      z-index: 10;
+      background-color: #F8DF32 !important;
+      border: 2px solid #111111;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      transition: transform 0.2s ease;
+      cursor: pointer;
+    }
+
+    .nav-btn:hover {
+      transform: scale(1.08);
+      background-color: #f5d410 !important;
+    }
+
+    .nav-btn i {
+      color: #111111 !important;
+      font-size: 2.2rem !important;
+      line-height: 56px;
+    }
+
+    .btn-left {
+      left: 40px;
+    }
+
+    .btn-right {
+      right: 40px;
+    }
+
+    /* Responsivo para celulares */
+    @media (max-width: 768px) {
+      .header-bar h1 { font-size: 2.2rem; }
+      .content-grid { flex-direction: column; text-align: center; }
+      .input-section h2 { font-size: 1.8rem; }
+      .mascot-img { max-width: 220px; margin-top: 20px; }
+      .nav-btn { bottom: 20px; }
+      .btn-left { left: 20px; }
+      .btn-right { right: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Encabezado Superior -->
+    <header class="header-bar">
+      <h1>Conozcamonos un poco</h1>
+    </header>
+
+    <!-- Contenido Central -->
+    <main class="main-content">
+      <div class="content-grid">
+        
+        <!-- Entrada de Texto -->
+        <div class="input-section">
+          <h2>¿Como te llamas?</h2>
+          <div class="input-field">
+            <input id="nombre_usuario" type="text" class="custom-input" placeholder="" autocomplete="off">
+          </div>
+        </div>
+
+        <!-- Personaje Oso Leyendo -->
+        <div class="mascot-section">
+          <img src="https://cdni.iconscout.com/illustration/premium/thumb/bear-reading-book-illustration-download-in-svg-png-gif-file-formats--teddy-education-student-cute-pack-animals-illustrations-5383190.png" 
+               alt="Oso leyendo un libro" 
+               class="mascot-img">
+        </div>
+
+      </div>
+    </main>
+
+    <!-- Botón Izquierdo (Atrás) -->
+    <a href="#" class="btn-floating btn-large waves-effect waves-light nav-btn btn-left" id="btn-atras">
+      <i class="material-icons">arrow_back</i>
+    </a>
+
+    <!-- Botón Derecho (Guardar y Avanzar) -->
+    <button class="btn-floating btn-large waves-effect waves-light nav-btn btn-right" id="btn-siguiente">
+      <i class="material-icons">arrow_forward</i>
+    </button>
+  </div>
+
+  <!-- Materialize JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+  <!-- Firebase SDKs (Compatibilidad v9/v10) -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+  <script>
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyDoMIiDHAmuh07bdAAWqUxmUJiYTzx0uKw",
+  authDomain: "grizzly-12.firebaseapp.com",
+  projectId: "grizzly-12",
+  storageBucket: "grizzly-12.firebasestorage.app",
+  messagingSenderId: "217937691479",
+  appId: "1:217937691479:web:b20d1251d4d4f3437f3412"
+};
+    // Inicializar Firebase y Firestore
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // Referencias a los elementos HTML
+    const inputNombre = document.getElementById('nombre_usuario');
+    const btnSiguiente = document.getElementById('btn-siguiente');
+    const btnAtras = document.getElementById('btn-atras');
+
+    // Función para enviar el nombre a Firestore
+    async function guardarUsuario() {
+      const nombre = inputNombre.value.trim();
+
+      if (!nombre) {
+        M.toast({html: 'Por favor, escribe tu nombre primero 😊', classes: 'rounded red lighten-1'});
+        return;
+      }
+
+      try {
+        btnSiguiente.disabled = true;
+
+        // Guarda en la colección "Usuarios" tal como en tu imagen
+        await db.collection("Usuarios").add({
+          Nombre: nombre,
+          Nivel: "1"
+        });
+
+        M.toast({html: '¡Nombre guardado exitosamente! 🎉', classes: 'rounded green lighten-1'});
+
+        // Aquí puedes redirigir a la siguiente vista
+        // setTimeout(() => { window.location.href = "juego.html"; }, 1000);
+
+      } catch (error) {
+        console.error("Error al guardar en Firestore:", error);
+        M.toast({html: 'Error al conectar con la base de datos ❌', classes: 'rounded red'});
+      } finally {
+        btnSiguiente.disabled = false;
+      }
+    }
+
+    // Evento al hacer clic en la flecha derecha
+    btnSiguiente.addEventListener('click', guardarUsuario);
+
+    // Evento al presionar la tecla "Enter" dentro de la caja de texto
+    inputNombre.addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') {
+        guardarUsuario();
+      }
+    });
+
+    // Acción del botón Atrás
+    btnAtras.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.history.back();
+    });
+  </script>
+</body>
+</html>
