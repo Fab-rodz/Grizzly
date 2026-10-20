@@ -180,7 +180,7 @@
 
         <!-- Personaje Oso Leyendo -->
         <div class="mascot-section">
-          <img src="https://cdni.iconscout.com/illustration/premium/thumb/bear-reading-book-illustration-download-in-svg-png-gif-file-formats--teddy-education-student-cute-pack-animals-illustrations-5383190.png" 
+          <img src="img/mascota_leyendo.png" 
                alt="Oso leyendo un libro" 
                class="mascot-img">
         </div>
@@ -202,29 +202,24 @@
   <!-- Materialize JS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-  <!-- Firebase SDKs -->
+  <!-- Firebase SDKs (Compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
-  <script>
+  <scrip>
     // Configuración de tu proyecto Firebase
-    // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+    const firebaseConfig = {
+      apiKey: "AIzaSyDoMIiDHAmuh07bdAAWqUxmUJiYTzx0uKw",
+      authDomain: "grizzly-12.firebaseapp.com",
+      projectId: "grizzly-12",
+      storageBucket: "grizzly-12.firebasestorage.app",
+      messagingSenderId: "217937691479",
+      appId: "1:217937691479:web:b20d1251d4d4f3437f3412"
+    };
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyDoMIiDHAmuh07bdAAWqUxmUJiYTzx0uKw",
-  authDomain: "grizzly-12.firebaseapp.com",
-  projectId: "grizzly-12",
-  storageBucket: "grizzly-12.firebasestorage.app",
-  messagingSenderId: "217937691479",
-  appId: "1:217937691479:web:b20d1251d4d4f3437f3412"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+    // Inicialización correcta para el formato Compat
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore(); // <-- Definimos 'db' aquí
 
     const inputNombre = document.getElementById('nombre_usuario');
     const btnSiguiente = document.getElementById('btn-siguiente');
@@ -242,7 +237,7 @@ const app = initializeApp(firebaseConfig);
       try {
         btnSiguiente.disabled = true;
 
-        // Búsqueda en la colección "Usuarios" donde el campo "Nombre" sea igual al ingresado
+        // Búsqueda en la colección "Usuarios"
         const snapshot = await db.collection("Usuarios")
                                   .where("Nombre", "==", nombreIngresado)
                                   .get();
@@ -252,7 +247,7 @@ const app = initializeApp(firebaseConfig);
           const userDoc = snapshot.docs[0];
           const userData = userDoc.data();
 
-          // Opcional: Guardar en localStorage para mantener la sesión abierta
+          // Guardar en localStorage para mantener la sesión activa
           localStorage.setItem('usuarioSesion', JSON.stringify({
             id: userDoc.id,
             nombre: userData.Nombre,
@@ -263,9 +258,11 @@ const app = initializeApp(firebaseConfig);
             html: `¡Hola de nuevo, ${userData.Nombre}! 👋`, 
             classes: 'rounded green lighten-1'
           });
-          setTimeout(() => { window.location.href = "seleccionar nivel.html"; }, 1000)
-          // Redirigir al siguiente nivel/pantalla tras 1 segundo
-          // setTimeout(() => { window.location.href = "menu.html"; }, 1000);
+
+          // Redirección
+          setTimeout(() => { 
+            window.location.href = "seleccionar nivel.html"; 
+          }, 1000);
 
         } else {
           // El usuario NO existe en la base de datos
