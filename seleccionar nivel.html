@@ -1,11 +1,293 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seleccionar Nivel | Grizzly</title>
+
+  <!-- Google Material Icons & Fuente Fredoka -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Materialize CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      width: 100vw;
+      background-color: #FFF59E;
+      font-family: 'Fredoka', cursive, sans-serif;
+      overflow-x: hidden;
+    }
+
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      position: relative;
+    }
+
+    /* Encabezado Superior Amarillo */
+    .header-bar {
+      background-color: #F8DF32;
+      padding: 25px 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      border-radius: 0 0 25px 25px;
+    }
+
+    .header-bar h1 {
+      margin: 0;
+      font-size: 3.2rem;
+      font-weight: 700;
+      color: #111111;
+      text-align: center;
+    }
+
+    /* Subtítulo Central */
+    .subtitle {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #111111;
+      margin: 25px 0 15px 0;
+    }
+
+    /* Área Principal */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 0 20px 40px 20px;
+      z-index: 2;
+    }
+
+    /* Rejilla de Botones / Niveles */
+    .levels-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px 30px;
+      width: 100%;
+      max-width: 580px;
+      margin-top: 10px;
+    }
+
+    /* Tarjetas de Nivel (Estilo Óvalo) */
+    .level-card {
+      background-color: #FFFDE7;
+      border-radius: 35px;
+      padding: 15px 20px;
+      text-align: center;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.06);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 95px;
+      text-decoration: none;
+      color: #111111;
+      border: 2px solid transparent;
+    }
+
+    .level-card:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      border-color: #F8DF32;
+    }
+
+    .level-card .card-top-text {
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: 6px;
+      margin-bottom: 2px;
+    }
+
+    .level-card .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #111111;
+      margin: 0;
+    }
+
+    .stars-container {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 4px;
+    }
+
+    .stars-container i {
+      color: #F8DF32;
+      font-size: 1.9rem;
+      -webkit-text-stroke: 1px #e0b800;
+    }
+
+    /* Elementos Decorativos */
+    .decor-sun {
+      position: absolute;
+      top: 90px;
+      left: 6%;
+      width: 130px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .decor-bear {
+      position: absolute;
+      bottom: 15px;
+      left: 7%;
+      width: 270px;
+      z-index: 1;
+      pointer-events: none;
+      filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.08));
+    }
+
+    .decor-bird {
+      position: absolute;
+      top: 100px;
+      right: 7%;
+      width: 100px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .decor-rocks {
+      position: absolute;
+      bottom: 0;
+      right: 2%;
+      width: 210px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Diseño Responsivo para Pantallas Pequeñas */
+    @media (max-width: 992px) {
+      .decor-sun, .decor-bird { display: none; }
+      .decor-bear { width: 180px; left: 1%; bottom: 10px; opacity: 0.7; }
+      .decor-rocks { width: 140px; right: 0; opacity: 0.7; }
+    }
+
+    @media (max-width: 600px) {
+      .header-bar h1 { font-size: 2.2rem; }
+      .subtitle { font-size: 1.5rem; margin: 15px 0; }
+      .levels-container { grid-template-columns: 1fr; max-width: 320px; }
+      .decor-bear, .decor-rocks { display: none; }
+    }
+  </style>
 </head>
 <body>
-    
+
+  <div class="app-container">
+    <!-- Encabezado con el Nombre de Usuario Dinámico -->
+    <header class="header-bar">
+      <h1>¡Bienvenido <span id="nombre-usuario">Amigo</span>!</h1>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="main-content">
+      <h2 class="subtitle">¡Aprendamos jugando, Comenzemos!</h2>
+
+      <!-- Ilustraciones Decorativas -->
+      <img src="https://cdni.iconscout.com/illustration/premium/thumb/sun-and-cloud-illustration-download-in-svg-png-gif-file-formats--weather-sky-nature-pack-illustrations-5383191.png" alt="Sol y Nube" class="decor-sun">
+      
+      <img src="https://cdni.iconscout.com/illustration/premium/thumb/cute-bear-with-stars-illustration-download-in-svg-png-gif-file-formats--teddy-animal-happy-pack-illustrations-5383192.png" alt="Oso con estrellas" class="decor-bear">
+
+      <img src="https://cdni.iconscout.com/illustration/premium/thumb/cute-flying-bird-illustration-download-in-svg-png-gif-file-formats--animal-nature-freedom-pack-illustrations-5383193.png" alt="Pájaro volando" class="decor-bird">
+
+      <img src="https://cdni.iconscout.com/illustration/premium/thumb/rocks-with-grass-illustration-download-in-svg-png-gif-file-formats--nature-stone-pack-illustrations-5383194.png" alt="Rocas" class="decor-rocks">
+
+      <!-- Rejilla de Botones de Nivel -->
+      <div class="levels-container">
+        
+        <!-- Nivel Básico -->
+        <a href="juego_basico.html" class="level-card">
+          <div class="card-top-text">A E U</div>
+          <p class="card-title">Nivel Basico</p>
+        </a>
+
+        <!-- Nivel 1 -->
+        <a href="juego_nivel1.html" class="level-card">
+          <div class="stars-container">
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+          </div>
+          <p class="card-title">Nivel 1</p>
+        </a>
+
+        <!-- Nivel Intermedio -->
+        <a href="juego_intermedio.html" class="level-card">
+          <div class="card-top-text">A E U</div>
+          <p class="card-title">Nivel Intermedio</p>
+        </a>
+
+        <!-- Nivel 2 -->
+        <a href="juego_nivel2.html" class="level-card">
+          <div class="stars-container">
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+          </div>
+          <p class="card-title">Nivel 2</p>
+        </a>
+
+        <!-- Nivel Avanzado -->
+        <a href="juego_avanzado.html" class="level-card">
+          <div class="card-top-text">A E U</div>
+          <p class="card-title">Nivel Avanzado</p>
+        </a>
+
+        <!-- Nivel 3 -->
+        <a href="juego_nivel3.html" class="level-card">
+          <div class="stars-container">
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+            <i class="material-icons">star</i>
+          </div>
+          <p class="card-title">Nivel 3</p>
+        </a>
+
+      </div>
+    </main>
+  </div>
+
+  <!-- Materialize JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+  <script>
+    // Cargar el nombre guardado en la sesión de Firebase / localStorage
+    document.addEventListener('DOMContentLoaded', () => {
+      const sesion = localStorage.getItem('usuarioSesion');
+      const nombreUsuarioSpan = document.getElementById('nombre-usuario');
+
+      if (sesion) {
+        try {
+          const usuarioData = JSON.parse(sesion);
+          if (usuarioData && usuarioData.nombre) {
+            // Reemplaza "Juan" con el nombre real guardado en la sesión
+            nombreUsuarioSpan.textContent = usuarioData.nombre;
+          }
+        } catch (error) {
+          console.error("Error al procesar la sesión de usuario:", error);
+        }
+      }
+    });
+  </script>
 </body>
 </html>
