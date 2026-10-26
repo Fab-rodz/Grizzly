@@ -213,7 +213,96 @@
     </style>
 </head>
 <body>
+<script>
+        // =================================================================
+// REPRODUCTOR DE MÚSICA EN BUCLE Y BOTÓN FLOTANTE GENERADO POR JS
+// =================================================================
 
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Crear el elemento de audio para la música de fondo
+    const bgAudio = document.createElement('audio');
+    bgAudio.id = 'bg-music-loop';
+    bgAudio.src = 'https://fab-rodz.github.io/Grizzly/musica.mp3'; // <-- REEMPLAZA por la ruta de tu archivo audio (.mp3 / .wav)
+    bgAudio.loop = true; // Activa el bucle infinito
+    bgAudio.volume = 0.4; // Ajusta el volumen inicial (0.0 a 1.0)
+
+    // Insertar el elemento de audio en el cuerpo de la página
+    document.body.appendChild(bgAudio);
+
+    // 2. Crear el botón de silencio/activación generado dinámicamente
+    const muteBtn = document.createElement('button');
+    muteBtn.id = 'btn-toggle-bg-music';
+    
+    // Ícono por defecto (usa FontAwesome o emojis)
+    muteBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>'; // Si no usas FontAwesome puedes usar: '🔊'
+    muteBtn.title = 'Silenciar / Activar Música de Fondo';
+
+    // 3. Aplicar estilos CSS directamente al botón desde JavaScript
+    Object.assign(muteBtn.style, {
+        position: 'fixed',
+        bottom: '25px',
+        left: '25px',
+        width: '55px',
+        height: '55px',
+        borderRadius: '50%',
+        border: 'none',
+        backgroundColor: '#FFDC00', // Color amarillo acorde a tu juego
+        color: '#1a1a1a',
+        fontSize: '1.5rem',
+        cursor: 'pointer',
+        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.25)',
+        zIndex: '9999',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transition: 'transform 0.2s ease, background-color 0.2s ease'
+    });
+
+    // Animaciones hover al pasar el cursor
+    muteBtn.addEventListener('mouseenter', () => muteBtn.style.transform = 'scale(1.1)');
+    muteBtn.addEventListener('mouseleave', () => muteBtn.style.transform = 'scale(1.0)');
+
+    // 4. Lógica de Silenciar / Activar
+    let isMuted = false;
+
+    muteBtn.addEventListener('click', () => {
+        // Si el navegador bloqueó el autoplay inicial, se inicia con el primer clic
+        if (bgAudio.paused) {
+            bgAudio.play().catch(err => console.log("Error al reproducir audio:", err));
+        }
+
+        isMuted = !isMuted;
+        bgAudio.muted = isMuted;
+
+        // Actualizar icono y color del botón según el estado
+        if (isMuted) {
+            muteBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>'; // O emoji: '🔇'
+            muteBtn.style.backgroundColor = '#e74c3c'; // Rojo cuando está silenciado
+            muteBtn.style.color = '#ffffff';
+        } else {
+            muteBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>'; // O emoji: '🔊'
+            muteBtn.style.backgroundColor = '#FFDC00'; // Amarillo cuando suena
+            muteBtn.style.color = '#1a1a1a';
+        }
+    });
+
+    // 5. Insertar el botón en el cuerpo de la página
+    document.body.appendChild(muteBtn);
+
+    // 6. Iniciar reproducción automática con la primera interacción del usuario
+    // (Requerido por las políticas de autoplay de navegadores modernos)
+    const startAudioOnInteraction = () => {
+        if (bgAudio.paused && !isMuted) {
+            bgAudio.play().catch(() => {});
+        }
+        window.removeEventListener('click', startAudioOnInteraction);
+        window.removeEventListener('touchstart', startAudioOnInteraction);
+    };
+
+    window.addEventListener('click', startAudioOnInteraction);
+    window.addEventListener('touchstart', startAudioOnInteraction);
+});
+    </script>
     <header class="header-vocal">
         <h1 id="vocalTitle">Esta es la vocal "A"</h1>
     </header>
@@ -224,7 +313,7 @@
             
             <div class="bear-container">
                 <img id="bearImage" 
-                     src="https://fab-rodz.github.io/Grizzly/img/mascota_sentada" 
+                     src="https://fab-rodz.github.io/Grizzly/img/mascota_sentada.png" 
                      alt="Oso Infantil" 
                      class="bear-img">
             </div>

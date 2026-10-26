@@ -313,6 +313,96 @@
     </style>
 </head>
 <body>
+    <script>
+        // =================================================================
+// REPRODUCTOR DE MÚSICA EN BUCLE Y BOTÓN FLOTANTE GENERADO POR JS
+// =================================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Crear el elemento de audio para la música de fondo
+    const bgAudio = document.createElement('audio');
+    bgAudio.id = 'bg-music-loop';
+    bgAudio.src = 'https://fab-rodz.github.io/Grizzly/musica.mp3'; // <-- REEMPLAZA por la ruta de tu archivo audio (.mp3 / .wav)
+    bgAudio.loop = true; // Activa el bucle infinito
+    bgAudio.volume = 0.4; // Ajusta el volumen inicial (0.0 a 1.0)
+
+    // Insertar el elemento de audio en el cuerpo de la página
+    document.body.appendChild(bgAudio);
+
+    // 2. Crear el botón de silencio/activación generado dinámicamente
+    const muteBtn = document.createElement('button');
+    muteBtn.id = 'btn-toggle-bg-music';
+    
+    // Ícono por defecto (usa FontAwesome o emojis)
+    muteBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>'; // Si no usas FontAwesome puedes usar: '🔊'
+    muteBtn.title = 'Silenciar / Activar Música de Fondo';
+
+    // 3. Aplicar estilos CSS directamente al botón desde JavaScript
+    Object.assign(muteBtn.style, {
+        position: 'fixed',
+        bottom: '25px',
+        left: '25px',
+        width: '55px',
+        height: '55px',
+        borderRadius: '50%',
+        border: 'none',
+        backgroundColor: '#FFDC00', // Color amarillo acorde a tu juego
+        color: '#1a1a1a',
+        fontSize: '1.5rem',
+        cursor: 'pointer',
+        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.25)',
+        zIndex: '9999',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        transition: 'transform 0.2s ease, background-color 0.2s ease'
+    });
+
+    // Animaciones hover al pasar el cursor
+    muteBtn.addEventListener('mouseenter', () => muteBtn.style.transform = 'scale(1.1)');
+    muteBtn.addEventListener('mouseleave', () => muteBtn.style.transform = 'scale(1.0)');
+
+    // 4. Lógica de Silenciar / Activar
+    let isMuted = false;
+
+    muteBtn.addEventListener('click', () => {
+        // Si el navegador bloqueó el autoplay inicial, se inicia con el primer clic
+        if (bgAudio.paused) {
+            bgAudio.play().catch(err => console.log("Error al reproducir audio:", err));
+        }
+
+        isMuted = !isMuted;
+        bgAudio.muted = isMuted;
+
+        // Actualizar icono y color del botón según el estado
+        if (isMuted) {
+            muteBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>'; // O emoji: '🔇'
+            muteBtn.style.backgroundColor = '#e74c3c'; // Rojo cuando está silenciado
+            muteBtn.style.color = '#ffffff';
+        } else {
+            muteBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>'; // O emoji: '🔊'
+            muteBtn.style.backgroundColor = '#FFDC00'; // Amarillo cuando suena
+            muteBtn.style.color = '#1a1a1a';
+        }
+    });
+
+    // 5. Insertar el botón en el cuerpo de la página
+    document.body.appendChild(muteBtn);
+
+    // 6. Iniciar reproducción automática con la primera interacción del usuario
+    // (Requerido por las políticas de autoplay de navegadores modernos)
+    const startAudioOnInteraction = () => {
+        if (bgAudio.paused && !isMuted) {
+            bgAudio.play().catch(() => {});
+        }
+        window.removeEventListener('click', startAudioOnInteraction);
+        window.removeEventListener('touchstart', startAudioOnInteraction);
+    };
+
+    window.addEventListener('click', startAudioOnInteraction);
+    window.addEventListener('touchstart', startAudioOnInteraction);
+});
+    </script>
 
     <!-- Canvas para efecto de confeti al acertar -->
     <canvas id="confetti-canvas"></canvas>
@@ -433,7 +523,7 @@
                 id: 1,
                 vowel: "A",
                 word: "Avión",
-                imageSrc: "img/avion.png",
+                imageSrc: "https://fab-rodz.github.io/Grizzly/img/avion.png",
                 options: [
                     { id: "opt-1", text: "Avión", audioSrc: "audios/avion.mp3", isCorrect: true, colorClass: "btn-red" },
                     { id: "opt-2", text: "Oso", audioSrc: "audios/oso.mp3", isCorrect: false, colorClass: "btn-blue" },
@@ -444,7 +534,7 @@
                 id: 2,
                 vowel: "E",
                 word: "Elástico",
-                imageSrc: "img/elastico.png",
+                imageSrc: "https://fab-rodz.github.io/Grizzly/img/elastico.png",
                 options: [
                     { id: "opt-1", text: "Elástico", audioSrc: "audios/elastico.mp3", isCorrect: true, colorClass: "btn-red" },
                     { id: "opt-2", text: "Elefante", audioSrc: "audios/elefante.mp3", isCorrect: false, colorClass: "btn-blue" },
@@ -455,7 +545,7 @@
                 id: 3,
                 vowel: "I",
                 word: "Iglú",
-                imageSrc: "img/iglu.png",
+                imageSrc: "https://fab-rodz.github.io/Grizzly/img/iglu.png",
                 options: [
                     { id: "opt-1", text: "Iguana", audioSrc: "audios/iguana.mp3", isCorrect: false, colorClass: "btn-red" },
                     { id: "opt-2", text: "Iglú", audioSrc: "audios/iglu.mp3", isCorrect: true, colorClass: "btn-blue" },
@@ -466,7 +556,7 @@
                 id: 4,
                 vowel: "O",
                 word: "Ojo",
-                imageSrc: "img/ojo.png",
+                imageSrc: "https://fab-rodz.github.io/Grizzly/img/ojo.png",
                 options: [
                     { id: "opt-1", text: "Oveja", audioSrc: "audios/oveja.mp3", isCorrect: false, colorClass: "btn-red" },
                     { id: "opt-2", text: "Sol", audioSrc: "audios/sol.mp3", isCorrect: false, colorClass: "btn-blue" },
@@ -477,7 +567,7 @@
                 id: 5,
                 vowel: "U",
                 word: "Uva",
-                imageSrc: "img/uva.png",
+                imageSrc: "https://fab-rodz.github.io/Grizzly/img/uva.png",
                 options: [
                     { id: "opt-1", text: "Uva", audioSrc: "audios/uva.mp3", isCorrect: true, colorClass: "btn-red" },
                     { id: "opt-2", text: "Unicornio", audioSrc: "audios/unicornio.mp3", isCorrect: false, colorClass: "btn-blue" },
