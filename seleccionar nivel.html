@@ -11,7 +11,7 @@
 
   <!-- Materialize CSS -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
       box-sizing: border-box;
@@ -219,43 +219,50 @@
 </head>
 <body>
 <script>
-        // =================================================================
-// REPRODUCTOR DE MÚSICA EN BUCLE Y BOTÓN FLOTANTE GENERADO POR JS
+// =================================================================
+// REPRODUCTOR DE MÚSICA EN BUCLE Y BOTÓN DENTRO DEL HEADER
 // =================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Crear el elemento de audio para la música de fondo
     const bgAudio = document.createElement('audio');
     bgAudio.id = 'bg-music-loop';
-    bgAudio.src = 'https://fab-rodz.github.io/Grizzly/musica.mp3'; // <-- REEMPLAZA por la ruta de tu archivo audio (.mp3 / .wav)
-    bgAudio.loop = true; // Activa el bucle infinito
-    bgAudio.volume = 0.4; // Ajusta el volumen inicial (0.0 a 1.0)
+    bgAudio.src = 'https://fab-rodz.github.io/Grizzly/musica.mp3'; // Ruta de tu archivo audio
+    bgAudio.loop = true;
+    bgAudio.volume = 0.4;
 
-    // Insertar el elemento de audio en el cuerpo de la página
     document.body.appendChild(bgAudio);
 
-    // 2. Crear el botón de silencio/activación generado dinámicamente
+    // 2. Seleccionar el elemento <header> de la página
+    const header = document.querySelector('header');
+
+    // Asegurar que el header tenga posición relativa para que el botón posicionado de forma absoluta se mantenga dentro de él
+    if (header && getComputedStyle(header).position === 'static') {
+        header.style.position = 'relative';
+    }
+
+    // 3. Crear el botón de silencio/activación
     const muteBtn = document.createElement('button');
     muteBtn.id = 'btn-toggle-bg-music';
-    
-    // Ícono por defecto (usa FontAwesome o emojis)
-    muteBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>'; // Si no usas FontAwesome puedes usar: '🔊'
+    muteBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
     muteBtn.title = 'Silenciar / Activar Música de Fondo';
 
-    // 3. Aplicar estilos CSS directamente al botón desde JavaScript
+    // 4. Estilos CSS para ubicarlo en la parte superior derecha del header
     Object.assign(muteBtn.style, {
-        position: 'fixed',
-        bottom: '25px',
-        left: '25px',
-        width: '55px',
-        height: '55px',
+        position: header ? 'absolute' : 'fixed', // 'absolute' dentro del header, 'fixed' como respaldo si no hay header
+        top: '15px',                            // Distancia desde arriba
+        right: '20px',                           // Distancia desde la derecha
+        bottom: 'auto',
+        left: 'auto',
+        width: '45px',                           // Tamaño adaptado para header
+        height: '45px',
         borderRadius: '50%',
         border: 'none',
-        backgroundColor: '#FFDC00', // Color amarillo acorde a tu juego
+        backgroundColor: '#FFDC00',
         color: '#1a1a1a',
-        fontSize: '1.5rem',
+        fontSize: '1.2rem',
         cursor: 'pointer',
-        boxShadow: '0 4px 15px rgba(0, 0, 0, 0.25)',
+        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.25)',
         zIndex: '9999',
         display: 'flex',
         alignItems: 'center',
@@ -263,15 +270,14 @@ document.addEventListener('DOMContentLoaded', () => {
         transition: 'transform 0.2s ease, background-color 0.2s ease'
     });
 
-    // Animaciones hover al pasar el cursor
+    // Animaciones hover
     muteBtn.addEventListener('mouseenter', () => muteBtn.style.transform = 'scale(1.1)');
     muteBtn.addEventListener('mouseleave', () => muteBtn.style.transform = 'scale(1.0)');
 
-    // 4. Lógica de Silenciar / Activar
+    // 5. Lógica de Silenciar / Activar
     let isMuted = false;
 
     muteBtn.addEventListener('click', () => {
-        // Si el navegador bloqueó el autoplay inicial, se inicia con el primer clic
         if (bgAudio.paused) {
             bgAudio.play().catch(err => console.log("Error al reproducir audio:", err));
         }
@@ -279,23 +285,22 @@ document.addEventListener('DOMContentLoaded', () => {
         isMuted = !isMuted;
         bgAudio.muted = isMuted;
 
-        // Actualizar icono y color del botón según el estado
         if (isMuted) {
-            muteBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>'; // O emoji: '🔇'
-            muteBtn.style.backgroundColor = '#e74c3c'; // Rojo cuando está silenciado
+            muteBtn.innerHTML = '<i class="fa-solid fa-volume-xmark"></i>';
+            muteBtn.style.backgroundColor = '#e74c3c';
             muteBtn.style.color = '#ffffff';
         } else {
-            muteBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>'; // O emoji: '🔊'
-            muteBtn.style.backgroundColor = '#FFDC00'; // Amarillo cuando suena
+            muteBtn.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+            muteBtn.style.backgroundColor = '#FFDC00';
             muteBtn.style.color = '#1a1a1a';
         }
     });
 
-    // 5. Insertar el botón en el cuerpo de la página
-    document.body.appendChild(muteBtn);
+    // 6. Insertar el botón en el header (o en body si la etiqueta <header> no existe)
+    const targetElement = header || document.body;
+    targetElement.appendChild(muteBtn);
 
-    // 6. Iniciar reproducción automática con la primera interacción del usuario
-    // (Requerido por las políticas de autoplay de navegadores modernos)
+    // 7. Iniciar reproducción automática con la primera interacción del usuario
     const startAudioOnInteraction = () => {
         if (bgAudio.paused && !isMuted) {
             bgAudio.play().catch(() => {});
@@ -307,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('click', startAudioOnInteraction);
     window.addEventListener('touchstart', startAudioOnInteraction);
 });
-    </script>
+</script>
   <div class="app-container">
     <!-- Encabezado con el Nombre de Usuario Dinámico -->
     <header class="header-bar">
