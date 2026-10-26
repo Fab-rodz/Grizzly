@@ -21,11 +21,19 @@
             --yellow-dark: #f1c40f;
             --text-dark: #1a1a1a;
             --bg-light: #FAFAFA;
-           
+            
             --header-yellow: #FFDC00;
             --btn-red: #e74c3c;
             --btn-blue: #3498db;
             --btn-green: #2ecc71;
+            --btn-purple: #9b59b6;
+            --btn-disabled: #bdc3c7;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
         }
 
         body {
@@ -37,12 +45,22 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            user-select: none;
             overflow-x: hidden;
         }
 
-        
-         .header-vocal {
+        /* Canvas de Confeti */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* Header */
+        .header-vocal {
             background-color: var(--yellow-accent);
             padding: 22px 10px;
             text-align: center;
@@ -59,7 +77,7 @@
             letter-spacing: 0.5px;
         }
 
-      
+        /* Contenedor principal */
         .main-container {
             flex: 1;
             display: flex;
@@ -74,8 +92,33 @@
             font-size: clamp(1.2rem, 3vw, 1.8rem);
             font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 35px;
+            margin-bottom: 25px;
             text-align: center;
+        }
+
+        /* Puntos de avance de niveles */
+        .level-indicator {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .level-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .level-dot.active {
+            background-color: #1a1a1a;
+            transform: scale(1.3);
+        }
+
+        .level-dot.completed {
+            background-color: #2ecc71;
         }
 
         .content-wrapper {
@@ -88,48 +131,81 @@
             flex-wrap: wrap;
         }
 
-      
+        /* Tarjeta con la imagen */
         .image-card {
             background-color: #ffffff;
             border: 4px solid var(--header-yellow);
             border-radius: 20px;
             padding: 15px;
             width: 340px;
-            height: 220px;
+            height: 230px;
             display: flex;
             justify-content: center;
             align-items: center;
             box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s ease, transform 0.3s ease;
         }
 
         .image-card img {
             max-width: 100%;
             max-height: 100%;
             object-fit: contain;
+            border-radius: 12px;
         }
 
-        
+        /* Fallback si la imagen no existe */
+        .image-fallback {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #7f8c8d;
+            padding: 10px;
+        }
+
+        .image-fallback i {
+            font-size: 48px;
+            color: #f39c12;
+            margin-bottom: 10px;
+        }
+
+        .image-fallback p {
+            margin: 4px 0 0 0;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        /* Contenedor de Opciones */
         .options-container {
             display: flex;
             flex-direction: column;
             gap: 18px;
-            width: 230px;
+            width: 250px;
         }
 
         .btn-audio {
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            padding: 12px 24px;
+            padding: 14px 24px;
             border: none;
             border-radius: 30px;
             color: #ffffff;
             font-size: 1.4rem;
             font-weight: 700;
             cursor: pointer;
-            transition: transform 0.1s ease, filter 0.2s ease;
+            transition: transform 0.15s ease, filter 0.2s ease, background-color 0.3s ease;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
             width: 100%;
+            position: relative;
+            outline: none;
+        }
+
+        .btn-audio:hover {
+            filter: brightness(1.05);
         }
 
         .btn-audio:active {
@@ -137,15 +213,42 @@
         }
 
         .btn-audio i {
-            margin-right: 18px;
+            margin-right: 16px;
             font-size: 1.5rem;
+            width: 24px;
+            text-align: center;
         }
 
         .btn-red { background-color: var(--btn-red); }
         .btn-blue { background-color: var(--btn-blue); }
         .btn-green { background-color: var(--btn-green); }
+        .btn-purple { background-color: var(--btn-purple); }
 
-      
+        /* Estados de respuesta */
+        .btn-audio.correct-choice {
+            background-color: #27ae60 !important;
+            transform: scale(1.04);
+            box-shadow: 0 6px 16px rgba(39, 174, 96, 0.4);
+            animation: pulseSuccess 0.6s infinite alternate;
+        }
+
+        .btn-audio.wrong-choice {
+            background-color: #c0392b !important;
+            animation: shake 0.4s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
+        }
+
+        @keyframes pulseSuccess {
+            0% { transform: scale(1.02); }
+            100% { transform: scale(1.07); }
+        }
+
+        /* Botón flotante para avanzar de nivel */
         .btn-next-floating {
             position: fixed;
             bottom: 30px;
@@ -157,16 +260,18 @@
             display: flex;
             align-items: center;
             justify-content: center;
-             box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
             cursor: pointer;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, opacity 0.3s ease, background-color 0.3s ease;
             text-decoration: none;
             z-index: 90;
-            margin: bg black;;
+            border: none;
+            outline: none;
         }
 
-        .btn-next-floating:hover {
-            transform: scale(1.08);
+        .btn-next-floating:hover:not(.disabled) {
+            transform: scale(1.12);
+            background-color: #f1c40f;
         }
 
         .btn-next-floating i {
@@ -175,16 +280,25 @@
             font-weight: bold;
         }
 
+        /* Botón bloqueado cuando aún no se responde correctamente */
+        .btn-next-floating.disabled {
+            background-color: var(--btn-disabled);
+            cursor: not-allowed;
+            opacity: 0.55;
+            box-shadow: none;
+            transform: none !important;
+        }
+
         @media (max-width: 600px) {
             .content-wrapper {
                 gap: 25px;
             }
             .image-card {
                 width: 290px;
-                height: 180px;
+                height: 190px;
             }
             .options-container {
-                width: 200px;
+                width: 220px;
             }
             .btn-next-floating {
                 width: 55px;
@@ -200,75 +314,452 @@
 </head>
 <body>
 
-   
+    <!-- Canvas para efecto de confeti al acertar -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Encabezado -->
     <header class="header-vocal">
         <h1>Cómo se llama</h1>
     </header>
 
-   
+    <!-- Contenido principal -->
     <main class="main-container">
         <p class="instruction">Observa la imagen y elige el nombre correcto</p>
 
+        <!-- Indicador de progreso de niveles -->
+        <div class="level-indicator" id="level-dots"></div>
+
         <div class="content-wrapper">
-            <!-- TARJETA CON LA IMAGEN DE LA ABEJA -->
-            <div class="image-card">
-                <img id="mainImage" src="/img/abeja.png" alt="Abeja">
+            <!-- TARJETA CON LA IMAGEN PRINCIPAL -->
+            <div class="image-card" id="image-container">
+                <!-- Se renderiza dinámicamente -->
             </div>
 
-            <!-- BOTONES DE AUDIO -->
-            <div class="options-container">
-                <button class="btn-audio btn-red" onclick="reproducirAudio('audio-abeja')">
-                    <i class="fa-solid fa-volume-high"></i>
-                    <span>  Abeja</span>
-                </button>
-
-                <button class="btn-audio btn-blue" onclick="reproducirAudio('audio-oso')">
-                    <i class="fa-solid fa-volume-high"></i>
-                    <span>  Oso</span>
-                </button>
-
-                <button class="btn-audio btn-green" onclick="reproducirAudio('audio-sapo')">
-                    <i class="fa-solid fa-volume-high"></i>
-                    <span>  Sapo</span>
-                </button>
+            <!-- BOTONES DE OPCIONES CON AUDIOS -->
+            <div class="options-container" id="options-container">
+                <!-- Se cargan dinámicamente -->
             </div>
         </div>
     </main>
 
-   
-    <a href="comosellamaelefante.html" class="btn-next-floating tooltipped" data-position="top" data-tooltip="Siguiente">
+    <!-- BOTÓN DE SIGUIENTE (SÓLO SE HABILITA AL ACERTAR) -->
+    <button id="btn-next" class="btn-next-floating tooltipped disabled" data-position="top" data-tooltip="Siguiente" disabled>
         <i class="material-icons">arrow_forward</i>
-    </a>
+    </button>
 
-
-    <audio id="audio-abeja" src="audios/abeja.mp3"></audio>
-    <audio id="audio-oso" src="audios/oso.mp3"></audio>
-    <audio id="audio-sapo" src="audios/sapo.mp3"></audio>
+    <!-- Elemento de audio global para reproducción de archivos -->
+    <audio id="global-audio-player"></audio>
 
     <!-- Materialize JS CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            M.Tooltip.init(document.querySelectorAll('.tooltipped'));
-        });
+    <!-- Firebase y Lógica Principal del Juego -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        function reproducirAudio(idAudio) {
-            // Detener cualquier otro audio reproduciéndose
-            const audios = document.querySelectorAll('audio');
-            audios.forEach(audio => {
-                audio.pause();
-                audio.currentTime = 0;
+        /*
+          ====================================================================
+          1. ENLACE DE REDIRECCIÓN A PÁGINA DE INICIO (EDITABLE)
+          ====================================================================
+        */
+        const LINK_INICIO = "https://tu-pagina-de-inicio.com"; // <--- COLOCA AQUÍ TU LINK DE INICIO
+
+        /*
+          ====================================================================
+          2. CONFIGURACIÓN Y AUTENTICACIÓN FIREBASE
+          ====================================================================
+        */
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_PROJECT_ID.firebaseapp.com",
+            projectId: "TU_PROJECT_ID",
+            storageBucket: "TU_PROJECT_ID.appspot.com",
+            messagingSenderId: "TU_SENDER_ID",
+            appId: "TU_APP_ID"
+        };
+
+        let db = null;
+        let auth = null;
+        let currentUser = null;
+
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            // Escuchar la sesión de usuario activa iniciada previamente
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    currentUser = user;
+                    console.log("Sesión activa detectada. UID:", user.uid);
+                } else {
+                    currentUser = null;
+                    console.warn("No se detectó sesión de usuario activa en Firebase.");
+                }
             });
+        } catch (error) {
+            console.warn("Firebase no está configurado totalmente. Coloca tus credenciales en firebaseConfig.", error);
+        }
 
-            // Reproducir el audio correspondiente al botón
-            const audioSelect = document.getElementById(idAudio);
-            if (audioSelect) {
-                audioSelect.play().catch(error => {
-                    console.log("No se pudo reproducir el audio. Verifica la ruta del archivo mp3:", error);
+        // Actualiza el parámetro Nivel a "3" en Firestore para el usuario activo
+        async function guardarProgresoFirebase() {
+            const activeUser = currentUser || (auth ? auth.currentUser : null);
+
+            if (!db || !activeUser) {
+                console.warn("No se pudo guardar progreso: Usuario no autenticado o Firebase desconfigurado.");
+                return;
+            }
+
+            try {
+                const userRef = doc(db, "Usuarios", activeUser.uid);
+                await updateDoc(userRef, {
+                    Nivel: "3"
                 });
+                console.log(`Nivel actualizado exitosamente a '3' para el usuario ${activeUser.uid}`);
+            } catch (error) {
+                console.error("Error al actualizar Nivel en Firestore:", error);
             }
         }
+
+        /*
+          ====================================================================
+          3. ESTRUCTURA DE NIVELES (A, E, I, O, U)
+          ====================================================================
+        */
+        const levels = [
+            {
+                id: 1,
+                vowel: "A",
+                word: "Avión",
+                imageSrc: "img/avion.png",
+                options: [
+                    { id: "opt-1", text: "Avión", audioSrc: "audios/avion.mp3", isCorrect: true, colorClass: "btn-red" },
+                    { id: "opt-2", text: "Oso", audioSrc: "audios/oso.mp3", isCorrect: false, colorClass: "btn-blue" },
+                    { id: "opt-3", text: "Sapo", audioSrc: "audios/sapo.mp3", isCorrect: false, colorClass: "btn-green" }
+                ]
+            },
+            {
+                id: 2,
+                vowel: "E",
+                word: "Elástico",
+                imageSrc: "img/elastico.png",
+                options: [
+                    { id: "opt-1", text: "Elástico", audioSrc: "audios/elastico.mp3", isCorrect: true, colorClass: "btn-red" },
+                    { id: "opt-2", text: "Elefante", audioSrc: "audios/elefante.mp3", isCorrect: false, colorClass: "btn-blue" },
+                    { id: "opt-3", text: "Pato", audioSrc: "audios/pato.mp3", isCorrect: false, colorClass: "btn-green" }
+                ]
+            },
+            {
+                id: 3,
+                vowel: "I",
+                word: "Iglú",
+                imageSrc: "img/iglu.png",
+                options: [
+                    { id: "opt-1", text: "Iguana", audioSrc: "audios/iguana.mp3", isCorrect: false, colorClass: "btn-red" },
+                    { id: "opt-2", text: "Iglú", audioSrc: "audios/iglu.mp3", isCorrect: true, colorClass: "btn-blue" },
+                    { id: "opt-3", text: "Gato", audioSrc: "audios/gato.mp3", isCorrect: false, colorClass: "btn-green" }
+                ]
+            },
+            {
+                id: 4,
+                vowel: "O",
+                word: "Ojo",
+                imageSrc: "img/ojo.png",
+                options: [
+                    { id: "opt-1", text: "Oveja", audioSrc: "audios/oveja.mp3", isCorrect: false, colorClass: "btn-red" },
+                    { id: "opt-2", text: "Sol", audioSrc: "audios/sol.mp3", isCorrect: false, colorClass: "btn-blue" },
+                    { id: "opt-3", text: "Ojo", audioSrc: "audios/ojo.mp3", isCorrect: true, colorClass: "btn-green" }
+                ]
+            },
+            {
+                id: 5,
+                vowel: "U",
+                word: "Uva",
+                imageSrc: "img/uva.png",
+                options: [
+                    { id: "opt-1", text: "Uva", audioSrc: "audios/uva.mp3", isCorrect: true, colorClass: "btn-red" },
+                    { id: "opt-2", text: "Unicornio", audioSrc: "audios/unicornio.mp3", isCorrect: false, colorClass: "btn-blue" },
+                    { id: "opt-3", text: "Luna", audioSrc: "audios/luna.mp3", isCorrect: false, colorClass: "btn-green" }
+                ]
+            }
+        ];
+
+        let currentLevelIndex = 0;
+        let levelResolved = false;
+
+        // Elementos DOM
+        const imageContainer = document.getElementById('image-container');
+        const optionsContainer = document.getElementById('options-container');
+        const levelDots = document.getElementById('level-dots');
+        const nextBtn = document.getElementById('btn-next');
+        const globalAudioPlayer = document.getElementById('global-audio-player');
+
+        // --- SINTETIZADOR WEB AUDIO PARA EFECTOS ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSynthEffect(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            if (type === 'success') {
+                const freqs = [523.25, 659.25, 783.99, 1046.50];
+                freqs.forEach((f, i) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(f, audioCtx.currentTime + i * 0.08);
+                    gain.gain.setValueAtTime(0.18, audioCtx.currentTime + i * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.08 + 0.3);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(audioCtx.currentTime + i * 0.08);
+                    osc.stop(audioCtx.currentTime + i * 0.08 + 0.3);
+                });
+            } else if (type === 'error') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+                osc.frequency.linearRampToValueAtTime(100, audioCtx.currentTime + 0.25);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.25);
+            }
+        }
+
+        // --- EFECTO CONFETI ---
+        function launchConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f1c40f', '#9b59b6', '#e67e22'];
+
+            for (let i = 0; i < 70; i++) {
+                particles.push({
+                    x: canvas.width / 2,
+                    y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 14,
+                    vy: (Math.random() - 0.7) * 15,
+                    size: Math.random() * 8 + 6,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    rotation: Math.random() * 360,
+                    rotSpeed: (Math.random() - 0.5) * 10,
+                    opacity: 1
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let alive = false;
+
+                particles.forEach(p => {
+                    if (p.opacity > 0) {
+                        alive = true;
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.vy += 0.35;
+                        p.opacity -= 0.018;
+                        p.rotation += p.rotSpeed;
+
+                        ctx.save();
+                        ctx.translate(p.x, p.y);
+                        ctx.rotate((p.rotation * Math.PI) / 180);
+                        ctx.fillStyle = p.color;
+                        ctx.globalAlpha = Math.max(0, p.opacity);
+                        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                        ctx.restore();
+                    }
+                });
+
+                if (alive) {
+                    requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            animate();
+        }
+
+        // Reproduce el audio de la opción seleccionada
+        function playOptionAudio(audioSrc, wordText, onEndedCallback) {
+            globalAudioPlayer.pause();
+            globalAudioPlayer.currentTime = 0;
+
+            if (audioSrc) {
+                globalAudioPlayer.src = audioSrc;
+                const playPromise = globalAudioPlayer.play();
+
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        if (onEndedCallback) {
+                            globalAudioPlayer.onended = onEndedCallback;
+                        }
+                    }).catch(error => {
+                        console.log("No se pudo cargar el audio local. Utilizando voz de síntesis:", error);
+                        speakFallback(wordText, onEndedCallback);
+                    });
+                }
+            } else {
+                speakFallback(wordText, onEndedCallback);
+            }
+        }
+
+        function speakFallback(text, callback) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'es-ES';
+                utterance.rate = 0.9;
+                if (callback) {
+                    utterance.onend = callback;
+                }
+                window.speechSynthesis.speak(utterance);
+            } else if (callback) {
+                callback();
+            }
+        }
+
+        // Renderiza el nivel actual
+        function loadLevel(index) {
+            levelResolved = false;
+
+            // Bloquear botón de siguiente nivel por defecto
+            nextBtn.disabled = true;
+            nextBtn.classList.add('disabled');
+
+            const currentLevel = levels[index];
+
+            // Renderizar la Imagen o el Marco de Carga si no existe
+            renderImage(currentLevel);
+
+            // Renderizar Opciones de Respuesta
+            renderOptions(currentLevel);
+
+            // Renderizar puntos indicativos de nivel
+            renderLevelDots();
+        }
+
+        function renderImage(level) {
+            imageContainer.innerHTML = '';
+
+            const img = document.createElement('img');
+            img.src = level.imageSrc;
+            img.alt = level.word;
+
+            // Manejo de fallback si no encuentra la imagen local
+            img.onerror = () => {
+                imageContainer.innerHTML = `
+                    <div class="image-fallback">
+                        <i class="fa-solid fa-image"></i>
+                        <p>Imagen pendiente:</p>
+                        <strong>"${level.word}"</strong>
+                        <small style="color: #95a5a6; margin-top: 4px;">Ruta: ${level.imageSrc}</small>
+                    </div>
+                `;
+            };
+
+            imageContainer.appendChild(img);
+        }
+
+        function renderOptions(level) {
+            optionsContainer.innerHTML = '';
+
+            level.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = `btn-audio ${opt.colorClass}`;
+                btn.dataset.id = opt.id;
+                btn.dataset.correct = opt.isCorrect;
+                
+                btn.innerHTML = `
+                    <i class="fa-solid fa-volume-high"></i>
+                    <span>${opt.text}</span>
+                `;
+
+                btn.addEventListener('click', () => handleOptionClick(btn, opt, level));
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function renderLevelDots() {
+            levelDots.innerHTML = '';
+            levels.forEach((lvl, idx) => {
+                const dot = document.createElement('div');
+                dot.className = 'level-dot';
+                if (idx === currentLevelIndex) {
+                    dot.classList.add('active');
+                } else if (idx < currentLevelIndex) {
+                    dot.classList.add('completed');
+                }
+                levelDots.appendChild(dot);
+            });
+        }
+
+        // Evalúa la respuesta elegida
+        function handleOptionClick(btn, option, level) {
+            if (levelResolved) return; // Si ya resolvió este nivel, ignorar otros clics
+
+            // Reproducir audio de la palabra elegida
+            playOptionAudio(option.audioSrc, option.text, () => {
+                if (!option.isCorrect) {
+                    // Si falla, el botón de siguiente permanece deshabilitado
+                    playSynthEffect('error');
+                }
+            });
+
+            if (option.isCorrect) {
+                // RESPUESTA CORRECTA
+                levelResolved = true;
+                btn.classList.add('correct-choice');
+                
+                // Efectos de victoria
+                playSynthEffect('success');
+                launchConfetti();
+
+                // HABILITAR EL BOTÓN DE SIGUIENTE
+                nextBtn.disabled = false;
+                nextBtn.classList.remove('disabled');
+            } else {
+                // RESPUESTA INCORRECTA: Vibrate / Shake y NO SE PERMITE AVANZAR
+                btn.classList.add('wrong-choice');
+                setTimeout(() => {
+                    btn.classList.remove('wrong-choice');
+                }, 500);
+
+                // Asegurar bloqueo estricto del botón siguiente
+                nextBtn.disabled = true;
+                nextBtn.classList.add('disabled');
+            }
+        }
+
+        // Avanzar de Nivel o Finalizar Juego
+        nextBtn.addEventListener('click', async () => {
+            if (!levelResolved) return; // Bloqueo si no ha respondido bien
+
+            if (currentLevelIndex >= levels.length - 1) {
+                // Si es el último nivel (Nivel 5 - Uva)
+                await guardarProgresoFirebase();
+                // Redirigir automáticamente a la página de inicio
+                window.location.href = LINK_INICIO;
+            } else {
+                currentLevelIndex++;
+                loadLevel(currentLevelIndex);
+            }
+        });
+
+        // Inicializar tooltips de Materialize e iniciar en nivel 0
+        document.addEventListener('DOMContentLoaded', () => {
+            M.Tooltip.init(document.querySelectorAll('.tooltipped'));
+            loadLevel(currentLevelIndex);
+        });
     </script>
 </body>
 </html>
