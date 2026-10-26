@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¡Arrastra la vocal correcta!</title>
+
+  <!-- Materialize CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <!-- Google Fonts: Fredoka para tipografía infantil redondeada -->
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: 'Fredoka', cursive, sans-serif;
+      background-color: #FEF9C3; /* Amarillo crema suave */
+      overflow-x: hidden;
+    }
+
+    /* Canvas para efecto de confeti */
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* Encabezado */
+    .game-header {
+      background-color: #FDE047; /* Amarillo brillante */
+      width: 100%;
+      padding: 18px 10px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .game-header h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: #000000;
+      letter-spacing: 0.5px;
+    }
+
+    /* Área principal del juego */
+    .game-container {
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 20px 20px 80px 20px;
+      min-height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .content-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-around;
+      margin-top: 20px;
+      gap: 20px;
+    }
+
+    /* Contenedor y Marco para las Imágenes */
+    .illustration-card {
+      flex: 1 1 320px;
+      max-width: 420px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px;
+    }
+
+    .image-frame {
+      width: 100%;
+      height: 240px;
+      background-color: #FFFFFF;
+      border: 4px dashed #FACC15;
+      border-radius: 24px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+      padding: 12px;
+    }
+
+    .image-frame:hover {
+      transform: translateY(-3px);
+      border-color: #EAB308;
+    }
+
+    /* Imagen insertada por el usuario */
+    .image-frame img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: 16px;
+      transition: transform 0.3s ease;
+    }
+
+    /* Fallback / Indicador cuando no hay imagen cargada */
+    .placeholder-fallback {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #9CA3AF;
+      text-align: center;
+      padding: 15px;
+    }
+
+    .placeholder-fallback i {
+      font-size: 54px;
+      color: #F59E0B;
+      margin-bottom: 8px;
+    }
+
+    .placeholder-fallback span {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #4B5563;
+    }
+
+    .placeholder-fallback small {
+      font-size: 0.85rem;
+      color: #6B7280;
+      margin-top: 4px;
+    }
+
+    /* Sección de la pregunta y ranuras */
+    .word-section {
+      flex: 1 1 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .question-title {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    /* Ranuras de las letras */
+    .word-slots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: nowrap;
+    }
+
+    .slot-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      width: 50px;
+      height: 70px;
+      position: relative;
+    }
+
+    .slot-letter {
+      font-size: clamp(2.2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      color: #000000;
+      line-height: 1;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+    }
+
+    .slot-line {
+      width: 100%;
+      height: 5px;
+      background-color: #000000;
+      border-radius: 3px;
+    }
+
+    /* Zona receptora (Dropzone) */
+    .drop-slot {
+      border: 3px dashed #9CA3AF;
+      border-radius: 12px;
+      background-color: rgba(255, 255, 255, 0.7);
+      transition: all 0.2s ease;
+    }
+
+    .drop-slot.drag-over {
+      border-color: #2563EB;
+      background-color: rgba(191, 219, 254, 0.9);
+      transform: scale(1.08);
+    }
+
+    .drop-slot.filled {
+      border: none;
+      background-color: transparent;
+    }
+
+    .drop-slot .slot-letter {
+      color: #16A34A; /* Verde al acertar */
+      animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      80% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1); }
+    }
+
+    /* Sección inferior de fichas de vocales */
+    .vowels-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 18px;
+      margin-top: 40px;
+      flex-wrap: wrap;
+    }
+
+    .vowel-btn {
+      width: clamp(60px, 12vw, 75px);
+      height: clamp(60px, 12vw, 75px);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(2rem, 4vw, 2.5rem);
+      font-weight: 700;
+      color: #000000;
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.18);
+      cursor: grab;
+      touch-action: none;
+      position: relative;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      z-index: 10;
+    }
+
+    .vowel-btn:active {
+      cursor: grabbing;
+    }
+
+    .vowel-btn.dragging {
+      opacity: 0.85;
+      transform: scale(1.15);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+      z-index: 1000 !important;
+    }
+
+    /* Colores vibrantes de las vocales */
+    .vowel-a { background-color: #EF4444; color: #FFFFFF; } /* Rojo */
+    .vowel-e { background-color: #3B82F6; color: #FFFFFF; } /* Azul */
+    .vowel-i { background-color: #84CC16; color: #000000; } /* Verde */
+    .vowel-o { background-color: #EAB308; color: #000000; } /* Amarillo */
+    .vowel-u { background-color: #F97316; color: #FFFFFF; } /* Naranja */
+
+    /* Botón de Siguiente (Flecha) */
+    .next-btn-container {
+      position: absolute;
+      bottom: 15px;
+      right: 20px;
+    }
+
+    .btn-next {
+      background-color: #FDE047 !important;
+      width: 60px !important;
+      height: 60px !important;
+      border-radius: 50% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+      cursor: pointer;
+      transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+      border: none;
+    }
+
+    /* Estado desactivado del botón cuando no se ha resuelto el nivel */
+    .btn-next:disabled, .btn-next.disabled {
+      background-color: #CBD5E1 !important;
+      cursor: not-allowed !important;
+      opacity: 0.5;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .btn-next:hover:not(:disabled) {
+      background-color: #FACC15 !important;
+      transform: scale(1.1);
+    }
+
+    .btn-next i {
+      color: #000000;
+      font-size: 32px;
+    }
+
+    /* Indicador de Nivel */
+    .level-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: #D1D5DB;
+      transition: all 0.3s ease;
+    }
+
+    .dot.active {
+      background-color: #CA8A04;
+      transform: scale(1.2);
+    }
+
+    /* Adaptaciones a pantallas pequeñas */
+    @media (max-width: 600px) {
+      .game-container {
+        padding: 10px 10px 90px 10px;
+      }
+      .image-frame {
+        height: 190px;
+      }
+      .vowels-row {
+        gap: 10px;
+      }
+      .slot-item {
+        width: 38px;
+        height: 55px;
+      }
+      .next-btn-container {
+        right: 15px;
+        bottom: 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Canvas para confeti -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Encabezado superior -->
+  <header class="game-header">
+    <h1>¡Arrastra la vocal correcta!</h1>
+  </header>
+
+  <main class="game-container">
+    
+    <!-- Contenido principal: Marco de Imagen + Palabra -->
+    <div class="content-row">
+      <!-- Espacio reservado para Imagen editable -->
+      <div class="illustration-card">
+        <div class="image-frame" id="image-frame">
+          <!-- La imagen o el placeholder se inserta dinámicamente -->
+        </div>
+      </div>
+
+      <!-- Área de la palabra a completar -->
+      <div class="word-section">
+        <div class="question-title" id="question-text">¿Qué vocal falta?</div>
+        <div class="word-slots" id="word-slots">
+          <!-- Ranuras generadas dinámicamente -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Indicador de niveles -->
+    <div class="level-dots" id="level-dots"></div>
+
+    <!-- Fichas de vocales para arrastrar -->
+    <div class="vowels-row" id="vowels-container">
+      <div class="vowel-btn vowel-a waves-effect waves-light" data-vowel="A">A</div>
+      <div class="vowel-btn vowel-e waves-effect waves-light" data-vowel="E">E</div>
+      <div class="vowel-btn vowel-i waves-effect waves-light" data-vowel="I">I</div>
+      <div class="vowel-btn vowel-o waves-effect waves-light" data-vowel="O">O</div>
+      <div class="vowel-btn vowel-u waves-effect waves-light" data-vowel="U">U</div>
+    </div>
+
+    <!-- Botón de siguiente nivel -->
+    <div class="next-btn-container">
+      <button class="btn-next waves-effect waves-light disabled" id="next-btn" title="Siguiente palabra" disabled>
+        <i class="material-icons">arrow_forward</i>
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Materialize JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+  <!-- Integración de Firebase SDK y Lógica del Juego -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    /*
+      ====================================================================
+      1. LINK DE PÁGINA DE INICIO (EDITABLE)
+      ====================================================================
+    */
+    const LINK_INICIO = "/seleccionar nivel.html"; // <--- COLOCA AQUÍ EL LINK A TU PÁGINA DE INICIO
+
+    /*
+      ====================================================================
+      2. CONFIGURACIÓN Y AUTENTICACIÓN / ACTUALIZACIÓN EN FIREBASE
+      ====================================================================
+    */
+    // Coloca aquí tus credenciales de tu proyecto de Firebase:
+    const firebaseConfig = {
+      apiKey: "AIzaSyDoMIiDHAmuh07bdAAWqUxmUJiYTzx0uKw",
+      authDomain: "grizzly-12.firebaseapp.com",
+      projectId: "grizzly-12",
+      storageBucket: "grizzly-12.firebasestorage.app",
+      messagingSenderId: "217937691479",
+      appId: "1:217937691479:web:b20d1251d4d4f3437f3412"
+    };
+
+    let db = null;
+    let auth = null;
+    let currentUser = null;
+
+    try {
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      auth = getAuth(app);
+
+      // Detectar automáticamente la sesión activa iniciada previamente
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          currentUser = user;
+          console.log("Sesión de usuario activa detectada. UID:", user.uid);
+        } else {
+          currentUser = null;
+          console.warn("No hay una sesión de usuario activa en Firebase Auth.");
+        }
+      });
+    } catch (error) {
+      console.warn("Firebase no inicializado completamente. Recuerda colocar tus credenciales en firebaseConfig.", error);
+    }
+
+    // Función para actualizar únicamente el campo 'Nivel' a "3" usando el UID dinámico del usuario
+    async function guardarProgresoFirebase() {
+      // Obtener el usuario activo capturado por el observer o por auth.currentUser
+      const activeUser = currentUser || (auth ? auth.currentUser : null);
+
+      if (!db || !activeUser) {
+        console.warn("No se pudo actualizar Firestore: Firebase no está configurado o no hay sesión de usuario activa.");
+        return;
+      }
+
+      try {
+        // Referencia directa al documento 'Usuarios/{user.uid}' según el inicio de sesión
+        const userRef = doc(db, "Usuarios", activeUser.uid);
+
+        // Actualizar únicamente el parámetro Nivel existente a "3" sin duplicar campos
+        await updateDoc(userRef, {
+          Nivel: "3"
+        });
+        console.log(`Progreso guardado con éxito para el usuario con UID ${activeUser.uid}: Nivel = '3'`);
+      } catch (error) {
+        console.error("Error al actualizar el nivel en Firebase:", error);
+      }
+    }
+
+    /*
+      ====================================================================
+      DATOS DE LOS NIVELES
+      ====================================================================
+    */
+    const levels = [
+      {
+        word: "AVIÓN",
+        missingIndex: 0,
+        answer: "A",
+        imageSrc: "/img/avion.png",
+        imageAlt: "Avión",
+        hint: "¿Qué vocal falta?"
+      },
+      {
+        word: "OSO",
+        missingIndex: 0,
+        answer: "O",
+        imageSrc: "/img/mascota_saludando.png",
+        imageAlt: "Oso",
+        hint: "¿Qué vocal falta?"
+      },
+      {
+        word: "ELEFANTE",
+        missingIndex: 0,
+        answer: "E",
+        imageSrc: "/img/elefante.png",
+        imageAlt: "Elefante",
+        hint: "¿Qué vocal falta?"
+      },
+      {
+        word: "IGLESIA",
+        missingIndex: 0,
+        answer: "I",
+        imageSrc: "/img/iglesia.png",
+        imageAlt: "Iglesia",
+        hint: "¿Qué vocal falta?"
+      },
+      {
+        word: "UVA",
+        missingIndex: 0,
+        answer: "U",
+        imageSrc: "uva.png",
+        imageAlt: "Uva",
+        hint: "¿Qué vocal falta?"
+      }
+    ];
+
+    let currentLevelIndex = 0;
+    let isCompleted = false;
+
+    // Elementos DOM
+    const imageFrame = document.getElementById('image-frame');
+    const wordSlotsContainer = document.getElementById('word-slots');
+    const vowelsContainer = document.getElementById('vowels-container');
+    const nextBtn = document.getElementById('next-btn');
+    const levelDotsContainer = document.getElementById('level-dots');
+
+    // --- EFECTOS DE SONIDO CON WEB AUDIO API ---
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playSound(type) {
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      if (type === 'success') {
+        const notes = [523.25, 659.25, 783.99, 1046.50];
+        notes.forEach((freq, index) => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime + index * 0.08);
+          gain.gain.setValueAtTime(0.2, audioCtx.currentTime + index * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + index * 0.08 + 0.3);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(audioCtx.currentTime + index * 0.08);
+          osc.stop(audioCtx.currentTime + index * 0.08 + 0.3);
+        });
+      } else if (type === 'error') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 0.25);
+        gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.25);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.25);
+      } else if (type === 'pop') {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(800, audioCtx.currentTime + 0.05);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.05);
+      }
+    }
+
+    // --- EFECTO DE CONFETI EN CANVAS ---
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = [];
+      const colors = ['#EF4444', '#3B82F6', '#84CC16', '#EAB308', '#F97316', '#EC4899', '#8B5CF6'];
+
+      for (let i = 0; i < 75; i++) {
+        particles.push({
+          x: canvas.width / 2,
+          y: canvas.height / 2,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 9 + 5,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          rotSpeed: (Math.random() - 0.5) * 12,
+          opacity: 1
+        });
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let active = false;
+
+        particles.forEach(p => {
+          if (p.opacity > 0) {
+            active = true;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.4;
+            p.opacity -= 0.015;
+            p.rotation += p.rotSpeed;
+
+            ctx.save();
+            ctx.translate(p.x, p.y);
+            ctx.rotate((p.rotation * Math.PI) / 180);
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = Math.max(0, p.opacity);
+            ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+            ctx.restore();
+          }
+        });
+
+        if (active) {
+          requestAnimationFrame(render);
+        } else {
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }
+      render();
+    }
+
+    // --- CARGAR Y RENDERIZAR NIVEL ---
+    function loadLevel(index) {
+      isCompleted = false;
+
+      // Deshabilitar y bloquear el botón de siguiente hasta completar la palabra
+      nextBtn.disabled = true;
+      nextBtn.classList.add('disabled');
+      nextBtn.classList.remove('pulse');
+
+      const level = levels[index];
+
+      // Renderizar Imagen
+      renderImageFrame(level);
+
+      // Generar ranuras de la palabra
+      wordSlotsContainer.innerHTML = '';
+      const letters = level.word.split('');
+
+      letters.forEach((char, idx) => {
+        const slot = document.createElement('div');
+        slot.className = 'slot-item';
+
+        if (idx === level.missingIndex) {
+          slot.classList.add('drop-slot');
+          slot.id = 'target-slot';
+          slot.innerHTML = `
+            <span class="slot-letter" id="slot-letter-text">_</span>
+            <div class="slot-line"></div>
+          `;
+        } else {
+          slot.innerHTML = `
+            <span class="slot-letter">${char}</span>
+            <div class="slot-line"></div>
+          `;
+        }
+        wordSlotsContainer.appendChild(slot);
+      });
+
+      renderLevelDots();
+      setupDragAndDrop();
+    }
+
+    function renderImageFrame(level) {
+      imageFrame.innerHTML = '';
+
+      if (level.imageSrc && level.imageSrc.trim() !== "") {
+        const img = document.createElement('img');
+        img.src = level.imageSrc;
+        img.alt = level.imageAlt || level.word;
+        
+        img.onerror = () => {
+          showPlaceholder(level.word);
+        };
+
+        imageFrame.appendChild(img);
+      } else {
+        showPlaceholder(level.word);
+      }
+    }
+
+    function showPlaceholder(word) {
+      imageFrame.innerHTML = `
+        <div class="placeholder-fallback">
+          <i class="material-icons">add_photo_alternate</i>
+          <span>Agrega aquí tu imagen</span>
+          <small>Palabra: <strong>${word}</strong></small>
+        </div>
+      `;
+    }
+
+    function renderLevelDots() {
+      levelDotsContainer.innerHTML = '';
+      levels.forEach((_, idx) => {
+        const dot = document.createElement('div');
+        dot.className = `dot ${idx === currentLevelIndex ? 'active' : ''}`;
+        levelDotsContainer.appendChild(dot);
+      });
+    }
+
+    // --- LÓGICA DE ARRASTRAR Y SOLTAR ---
+    function setupDragAndDrop() {
+      const vowelBtns = document.querySelectorAll('.vowel-btn');
+      const dropSlot = document.getElementById('target-slot');
+
+      vowelBtns.forEach(btn => {
+        let isDragging = false;
+        let startX = 0, startY = 0;
+        let currentX = 0, currentY = 0;
+
+        const onPointerDown = (e) => {
+          if (isCompleted) return;
+
+          playSound('pop');
+          isDragging = true;
+          btn.classList.add('dragging');
+
+          const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+          const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+          startX = clientX;
+          startY = clientY;
+
+          btn.setPointerCapture(e.pointerId);
+
+          window.addEventListener('pointermove', onPointerMove);
+          window.addEventListener('pointerup', onPointerUp);
+        };
+
+        const onPointerMove = (e) => {
+          if (!isDragging) return;
+
+          const clientX = e.clientX;
+          const clientY = e.clientY;
+
+          currentX = clientX - startX;
+          currentY = clientY - startY;
+
+          btn.style.transform = `translate(${currentX}px, ${currentY}px) scale(1.15)`;
+
+          if (dropSlot) {
+            const slotRect = dropSlot.getBoundingClientRect();
+            if (
+              clientX >= slotRect.left &&
+              clientX <= slotRect.right &&
+              clientY >= slotRect.top &&
+              clientY <= slotRect.bottom
+            ) {
+              dropSlot.classList.add('drag-over');
+            } else {
+              dropSlot.classList.remove('drag-over');
+            }
+          }
+        };
+
+        const onPointerUp = (e) => {
+          if (!isDragging) return;
+          isDragging = false;
+          btn.classList.remove('dragging');
+
+          if (dropSlot) {
+            dropSlot.classList.remove('drag-over');
+            const slotRect = dropSlot.getBoundingClientRect();
+            const clientX = e.clientX;
+            const clientY = e.clientY;
+
+            const droppedInside = (
+              clientX >= slotRect.left &&
+              clientX <= slotRect.right &&
+              clientY >= slotRect.top &&
+              clientY <= slotRect.bottom
+            );
+
+            const selectedVowel = btn.getAttribute('data-vowel');
+            const correctVowel = levels[currentLevelIndex].answer;
+
+            if (droppedInside) {
+              if (selectedVowel === correctVowel) {
+                // RESPUESTA CORRECTA: Se habilita el avance
+                handleSuccess(selectedVowel);
+                btn.style.transform = 'translate(0px, 0px)';
+              } else {
+                // RESPUESTA INCORRECTA: Se emite sonido de error y regresa a su origen
+                playSound('error');
+                returnToOrigin(btn);
+              }
+            } else {
+              returnToOrigin(btn);
+            }
+          } else {
+            returnToOrigin(btn);
+          }
+
+          window.removeEventListener('pointermove', onPointerMove);
+          window.removeEventListener('pointerup', onPointerUp);
+        };
+
+        const returnToOrigin = (element) => {
+          element.style.transition = 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+          element.style.transform = 'translate(0px, 0px)';
+          setTimeout(() => {
+            element.style.transition = 'transform 0.15s ease, box-shadow 0.15s ease';
+          }, 300);
+        };
+
+        btn.onpointerdown = onPointerDown;
+      });
+    }
+
+    // --- MANEJO DE ÉXITO ---
+    function handleSuccess(vowel) {
+      isCompleted = true;
+      const dropSlot = document.getElementById('target-slot');
+      const letterText = document.getElementById('slot-letter-text');
+
+      letterText.textContent = vowel;
+      dropSlot.classList.add('filled');
+
+      playSound('success');
+      launchConfetti();
+
+      // Desbloquear el botón de "Siguiente"
+      nextBtn.disabled = false;
+      nextBtn.classList.remove('disabled');
+      nextBtn.classList.add('pulse');
+    }
+
+    // --- EVENTOS NAVEGACIÓN Y REDIRECCIÓN ---
+    nextBtn.addEventListener('click', async () => {
+      if (!isCompleted) return; // Impedir avance si no ha resuelto la palabra
+
+      // Si es el último nivel, guardamos el progreso en Firebase y redirigimos
+      if (currentLevelIndex >= levels.length - 1) {
+        await guardarProgresoFirebase();
+        // Redirección a la página de inicio
+        window.location.href = LINK_INICIO;
+      } else {
+        currentLevelIndex++;
+        loadLevel(currentLevelIndex);
+      }
+    });
+
+    // Iniciar el juego
+    window.onload = () => {
+      loadLevel(currentLevelIndex);
+    };
+  </script>
+</body>
+</html>

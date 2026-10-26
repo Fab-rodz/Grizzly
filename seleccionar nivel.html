@@ -20,7 +20,7 @@
     body, html {
       margin: 0;
       padding: 0;
-      min-height: 100vh;
+      height: 100vh;
       width: 100vw;
       background-color: #FFF59E;
       font-family: 'Fredoka', cursive, sans-serif;
@@ -30,14 +30,16 @@
     .app-container {
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+      height: 100vh;
+      width: 100vw;
       position: relative;
     }
 
-    /* Encabezado Superior Amarillo */
+    /* 1. Encabezado Superior Más Grande (22vh) */
     .header-bar {
       background-color: #F8DF32;
-      padding: 25px 15px;
+      height: 22vh;
+      min-height: 130px;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -47,7 +49,7 @@
 
     .header-bar h1 {
       margin: 0;
-      font-size: 3.2rem;
+      font-size: 3.5rem;
       font-weight: 700;
       color: #111111;
       text-align: center;
@@ -56,32 +58,64 @@
     /* Subtítulo Central */
     .subtitle {
       text-align: center;
-      font-size: 2.2rem;
+      font-size: 2.3rem;
       font-weight: 700;
       color: #111111;
-      margin: 25px 0 15px 0;
+      margin: 15px 0 10px 0;
+      z-index: 2;
     }
 
-    /* Área Principal */
+    /* Contenido Principal con Flexbox */
     .main-content {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       position: relative;
-      padding: 0 20px 40px 20px;
+      padding: 0 5%;
       z-index: 2;
     }
 
-    /* Rejilla de Botones / Niveles */
+    /* Layout principal: Oso a la izquierda y Niveles a la derecha */
+    .layout-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1100px;
+      margin-top: 10px;
+      gap: 30px;
+    }
+
+    /* 2. Sección del Oso (Más grande y bien centrado a la izquierda) */
+    .bear-section {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .decor-bear {
+      width: 100%;
+      max-width: 380px;
+      height: auto;
+      filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.08));
+    }
+
+    /* 3. Sección de Niveles Alineada a la Derecha */
+    .levels-section {
+      flex: 1.2;
+      display: flex;
+      justify-content: flex-end;
+    }
+
     .levels-container {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 20px 30px;
+      gap: 20px 25px;
       width: 100%;
-      max-width: 580px;
-      margin-top: 10px;
+      max-width: 560px;
     }
 
     /* Tarjetas de Nivel (Estilo Óvalo) */
@@ -135,31 +169,21 @@
       -webkit-text-stroke: 1px #e0b800;
     }
 
-    /* Elementos Decorativos */
+    /* Ilustraciones de Fondo */
     .decor-sun {
       position: absolute;
-      top: 90px;
-      left: 6%;
-      width: 130px;
+      top: 10px;
+      left: 4%;
+      width: 140px;
       z-index: 1;
       pointer-events: none;
-    }
-
-    .decor-bear {
-      position: absolute;
-      bottom: 15px;
-      left: 7%;
-      width: 270px;
-      z-index: 1;
-      pointer-events: none;
-      filter: drop-shadow(0px 8px 12px rgba(0, 0, 0, 0.08));
     }
 
     .decor-bird {
       position: absolute;
-      top: 100px;
-      right: 7%;
-      width: 100px;
+      top: 15px;
+      right: 4%;
+      width: 110px;
       z-index: 1;
       pointer-events: none;
     }
@@ -167,24 +191,29 @@
     .decor-rocks {
       position: absolute;
       bottom: 0;
-      right: 2%;
-      width: 210px;
+      right: 1%;
+      width: 220px;
       z-index: 1;
       pointer-events: none;
     }
 
-    /* Diseño Responsivo para Pantallas Pequeñas */
+    /* Diseño Responsivo */
     @media (max-width: 992px) {
+      .header-bar h1 { font-size: 2.8rem; }
+      .subtitle { font-size: 1.8rem; }
+      .layout-wrapper { flex-direction: column; gap: 20px; align-items: center; }
+      .levels-section { justify-content: center; width: 100%; }
+      .decor-bear { max-width: 280px; }
       .decor-sun, .decor-bird { display: none; }
-      .decor-bear { width: 180px; left: 1%; bottom: 10px; opacity: 0.7; }
-      .decor-rocks { width: 140px; right: 0; opacity: 0.7; }
     }
 
     @media (max-width: 600px) {
+      .header-bar { height: 18vh; }
       .header-bar h1 { font-size: 2.2rem; }
-      .subtitle { font-size: 1.5rem; margin: 15px 0; }
+      .subtitle { font-size: 1.4rem; margin: 15px 0; }
       .levels-container { grid-template-columns: 1fr; max-width: 320px; }
-      .decor-bear, .decor-rocks { display: none; }
+      .decor-bear { max-width: 220px; }
+      .decor-rocks { display: none; }
     }
   </style>
 </head>
@@ -199,60 +228,71 @@
     <!-- Contenido Principal -->
     <main class="main-content">
       <h2 class="subtitle">¡Aprendamos jugando, Comenzemos!</h2>
-      <img src="img/mascota_feliz.png" alt="Oso con estrellas" class="decor-bear">
-      <!-- Rejilla de Botones de Nivel -->
-      <div class="levels-container">
+      <!-- Wrapper para dividir Oso (Izquierda) y Niveles (Derecha) -->
+      <div class="layout-wrapper">
         
-        <!-- Nivel Básico -->
-        <a href="juego_basico.html" class="level-card">
-          <div class="card-top-text">A E U</div>
-          <p class="card-title">Nivel Basico</p>
-        </a>
+        <!-- Sección del Oso Grande -->
+        <div class="bear-section">
+          <img src="img/mascota_feliz.png" alt="Oso con estrellas" class="decor-bear">
+        </div>
 
-        <!-- Nivel 1 -->
-        <a href="juego_nivel1.html" class="level-card">
-          <div class="stars-container">
-            <i class="material-icons">star</i>
-            <i class="material-icons">star</i>
-            <i class="material-icons">star</i>
-            <i class="material-icons">star</i>
+        <!-- Sección de los Niveles -->
+        <div class="levels-section">
+          <div class="levels-container">
+            
+            <!-- Nivel Básico -->
+            <a href="#" class="level-card">
+              <div class="card-top-text">A E U</div>
+              <p class="card-title">Nivel Basico</p>
+            </a>
+
+            <!-- Nivel 1 -->
+            <a href="nivel 1/ruleta A.html" class="level-card">
+              <div class="stars-container">
+                <i class="material-icons">star</i>
+                <i class="material-icons">star</i>
+                <i class="material-icons">star</i>
+                <i class="material-icons">star</i>
+              </div>
+              <p class="card-title">Nivel 1</p>
+            </a>
+
+            <!-- Nivel Intermedio -->
+            <a href="#" class="level-card">
+              <div class="card-top-text">A E U</div>
+              <p class="card-title">Nivel Intermedio</p>
+            </a>
+
+            <!-- Nivel 2 -->
+            <a href="nivel 2/comosellamaabeja.html" class="level-card">
+              <div class="stars-container">
+                <i class="material-icons">star</i>
+                <i class="material-icons">star</i>
+                <i class="material-icons">star</i>
+                <i class="material-icons">star</i>
+              </div>
+              <p class="card-title">Nivel 2</p>
+            </a>
+
+            <!-- Nivel Avanzado -->
+            <a href="#" class="level-card">
+              <div class="card-top-text">A E U</div>
+              <p class="card-title">Nivel Avanzado</p>
+            </a>
+
+            <!-- Nivel 3 -->
+            <a href="nivel 3/nivel3.html" class="level-card">
+              <div class="stars-container">
+                <i class="material-icons">star</i>
+                <i class="material-icons">star</i>
+                <i class="material-icons">star</i>
+                <i class="material-icons">star</i>
+              </div>
+              <p class="card-title">Nivel 3</p>
+            </a>
+
           </div>
-          <p class="card-title">Nivel 1</p>
-        </a>
-
-        <!-- Nivel Intermedio -->
-        <a href="juego_intermedio.html" class="level-card">
-          <div class="card-top-text">A E U</div>
-          <p class="card-title">Nivel Intermedio</p>
-        </a>
-
-        <!-- Nivel 2 -->
-        <a href="juego_nivel2.html" class="level-card">
-          <div class="stars-container">
-            <i class="material-icons">star</i>
-            <i class="material-icons">star</i>
-            <i class="material-icons">star</i>
-            <i class="material-icons">star</i>
-          </div>
-          <p class="card-title">Nivel 2</p>
-        </a>
-
-        <!-- Nivel Avanzado -->
-        <a href="juego_avanzado.html" class="level-card">
-          <div class="card-top-text">A E U</div>
-          <p class="card-title">Nivel Avanzado</p>
-        </a>
-
-        <!-- Nivel 3 -->
-        <a href="juego_nivel3.html" class="level-card">
-          <div class="stars-container">
-            <i class="material-icons">star</i>
-            <i class="material-icons">star</i>
-            <i class="material-icons">star</i>
-            <i class="material-icons">star</i>
-          </div>
-          <p class="card-title">Nivel 3</p>
-        </a>
+        </div>
 
       </div>
     </main>
@@ -262,7 +302,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
   <script>
-    // Cargar el nombre guardado en la sesión de Firebase / localStorage
+    // Cargar el nombre guardado desde localStorage (de la sesión activa)
     document.addEventListener('DOMContentLoaded', () => {
       const sesion = localStorage.getItem('usuarioSesion');
       const nombreUsuarioSpan = document.getElementById('nombre-usuario');
@@ -271,7 +311,6 @@
         try {
           const usuarioData = JSON.parse(sesion);
           if (usuarioData && usuarioData.nombre) {
-            // Reemplaza "Juan" con el nombre real guardado en la sesión
             nombreUsuarioSpan.textContent = usuarioData.nombre;
           }
         } catch (error) {
